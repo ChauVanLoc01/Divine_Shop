@@ -1,9 +1,10 @@
-import Form from './Components/Form'
+import Header from './Components/Header'
 
 function App() {
   return (
-    <div className='xl:max-w-7xl lg:max-w-5xl md:max-w-3xl md:mx-auto p-3 xl:text-lg md:text-base text-sm'>
-      <Form />
+    <div>
+      <Header />
+      <div className='F3F4F6 xl:max-w-7xl lg:max-w-4xl lg:mx-auto lg:px-0 px-2 md:px-4 md:text-base text-sm'></div>
     </div>
   )
 }
