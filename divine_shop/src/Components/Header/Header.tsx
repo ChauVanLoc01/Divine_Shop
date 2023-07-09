@@ -2,7 +2,7 @@ function Header() {
   return (
     <div className='text-white'>
       <div className='bg-[#0A59CC] py-2 lg:block hidden'>
-        <div className='flex xl:max-w-7xl lg:max-w-4xl lg:mx-auto lg:text-base'>
+        <div className='flex xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm'>
           <div className='flex items-center space-x-2 basis-1/3'>
             <span>
               <svg
@@ -84,7 +84,7 @@ function Header() {
         </div>
       </div>
       <div className='bg-[#2579F2]'>
-        <div className='xl:max-w-7xl lg:max-w-4xl lg:mx-auto lg:px-0 px-2 md:px-4 md:text-base text-sm py-3 space-y-4'>
+        <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-3 space-y-4'>
           <div className='flex justify-between'>
             <div className='text-3xl font-mono lg:flex hidden items-center space-x-3 hover:cursor-pointer'>
               <span>
@@ -290,6 +290,53 @@ function Header() {
               </svg>
               <span>Hình thức thanh toán</span>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className='bg-white text-gray-700 font-semibold lg:block hidden'>
+        <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-3 flex items-center justify-between'>
+          <button className='flex space-x-1 xl:space-x-2'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+              strokeWidth={1.5}
+              stroke='currentColor'
+              className='w-6 h-6'
+            >
+              <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
+            </svg>
+            <span>Danh mục sản phẩm</span>
+          </button>
+          <div className='flex xl:space-x-6 space-x-4'>
+            <button className='flex items-center xl:space-x-2 space-x-1'>
+              <img
+                src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Nap-thesvg-30724.svg?hash=1640449820'
+                alt='thuthuat&tintucpicture'
+              />
+              <span>Thủ Thuật & Tin Tức</span>
+            </button>
+            <button className='flex items-center xl:space-x-2 space-x-1'>
+              <img
+                src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Gioi-thieu-ban-be-87652.svg?hash=1640449820'
+                alt='gioithieubanbepicture'
+              />
+              <span>Giới thiệu bạn bè</span>
+            </button>
+            <button className='flex items-center space-x-2'>
+              <img
+                src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Lien-he-hop-tac-33199.svg?hash=1640449820'
+                alt='lienhehoptacpicture'
+              />
+              <span>Liên hệ hợp tác</span>
+            </button>
+            <button className='flex items-center space-x-2'>
+              <img
+                src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Uu-dai-khach-vip-79547.svg?hash=1640449820'
+                alt='uudaikhachhangvippicture'
+              />
+              <span>Ưu đãi khách hàng vip</span>
+            </button>
           </div>
         </div>
       </div>
