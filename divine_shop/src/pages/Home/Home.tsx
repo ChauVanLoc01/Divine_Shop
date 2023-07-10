@@ -3,8 +3,8 @@ import ProductsByBanner from './ProductsByBanner'
 
 function Home() {
   return (
-    <div className='bg-[#F3F4F6] lg:py-4'>
-      <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm '>
+    <div className='bg-[#F3F4F6] lg:py-4 space-y-8'>
+      <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
         <div className='md:space-y-4 space-y-2'>
           <div className='flex lg:flex-row flex-col justify-between lg:space-y-0 md:space-y-4 space-y-2'>
             <div className='lg:w-[19%] lg:block hidden h-full rounded-md overflow-hidden'>
@@ -56,12 +56,38 @@ function Home() {
             </div>
           </div>
         </div>
-        <ProductsByBanner
-          title='Sản phẩm nổi bật'
-          desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
-          products={Array(12).fill(0)}
-        />
       </div>
+      <ProductsByBanner
+        title='Sản phẩm nổi bật'
+        desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
+        products={Array(12).fill(0)}
+      />
+      <ProductsByBanner
+        title={
+          <div className='px-4 py-2 rounded-full border-2 border-white bg-transparent flex space-x-3 text-white text-xl font-semibold bg-[url("https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png")]'>
+            <span>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-6 h-6 stroke-2 stroke-red-500'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941'
+                />
+              </svg>
+            </span>
+            <span>#Sản phẩm bán chạy nhất</span>
+          </div>
+        }
+        img='https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png'
+        bgcolor='bg-[#000D21]'
+        products={Array(12).fill(0)}
+      />
     </div>
   )
 }
