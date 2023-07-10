@@ -8,10 +8,12 @@ function App() {
   return (
     <div>
       <Header />
-      {/* <Routes>
-        <Route path='/' element={<Home />} />
-      </Routes> */}
-      <ProductList />
+      <Routes>
+        <Route path='/'>
+          <Route index element={<Home />} />
+          <Route path='search' element={<ProductList />} />
+        </Route>
+      </Routes>
       <Footer />
     </div>
   )

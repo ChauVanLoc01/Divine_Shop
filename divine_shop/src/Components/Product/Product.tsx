@@ -5,7 +5,7 @@ type ProductProps = {
   bgColor?: string
 }
 
-function Product({ product, bgColor }: ProductProps) {
+function Product({ bgColor }: ProductProps) {
   return (
     <div
       className={`md:static relative ${classNames({
