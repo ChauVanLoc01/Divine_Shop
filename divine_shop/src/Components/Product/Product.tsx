@@ -12,12 +12,13 @@ function Product({ product, bgColor }: ProductProps) {
         'text-white': bgColor
       })}`}
     >
-      <a href=''>
+      <a className='relative' href=''>
         <img
           className='rounded-md cursor-pointer'
           src='https://cdn.divineshop.vn/image/catalog/Discord%20Nitro%203%20thang-71170.jpg?hash=1672370038'
           alt=''
         />
+        <span className='text-white px-3 py-1 bg-zinc-800 rounded-md absolute top-2 left-2'>Hết hàng</span>
       </a>
       <div className='lg:py-3 py-2 space-y-2'>
         <a className='line-clamp-2 cursor-pointer'>Discord Nitro 3 tháng (Đăng kí lần đầu)</a>

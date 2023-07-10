@@ -104,6 +104,26 @@ function Home() {
         content={<Paging products={Array(12).fill(0)} bgColor='bg-[#000D21]' />}
         hasButton={true}
       />
+      <Banner
+        title='Giá phù hợp'
+        hasButton={false}
+        content={
+          <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2 font-semibold text-gray-600'>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>20.000đ</button>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>50.000đ</button>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>100.000đ</button>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>200.000đ</button>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>500.000đ</button>
+            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>1.000.000đ</button>
+          </div>
+        }
+      />
+      <Banner
+        title='Game trên Steam'
+        hasButton={true}
+        desc='Những trò chơi được đánh giá tốt, nội dung hấp dẫn thu hút đang chờ bạn'
+        content={<Paging products={Array(8).fill(0)} />}
+      />
     </div>
   )
 }
