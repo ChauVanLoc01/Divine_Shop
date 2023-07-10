@@ -1,5 +1,6 @@
+import Paging from 'src/Components/Paging'
 import Category from './Category'
-import ProductsByBanner from './ProductsByBanner'
+import Banner from './Banner'
 
 function Home() {
   return (
@@ -57,14 +58,29 @@ function Home() {
           </div>
         </div>
       </div>
-      <ProductsByBanner
+      <Banner
         title='Sản phẩm nổi bật'
         desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
-        products={Array(12).fill(0)}
+        hasButton={true}
+        content={<Paging products={Array(8).fill(0)} />}
       />
-      <ProductsByBanner
+      <Banner
+        title='Từ khóa nổi bật'
+        hasButton={false}
+        content={
+          <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2'>
+            <button className='bg-[#3D5A80] lg:py-5 py-3 rounded-lg text-white font-semibold'>Làm việc</button>
+            <button className='bg-[#98C1D9] lg:py-5 py-3 rounded-lg text-white font-semibold'>Giải trí</button>
+            <button className='bg-[#EE6C4D] lg:py-5 py-3 rounded-lg text-white font-semibold'>Học tập</button>
+            <button className='bg-[#293241] lg:py-5 py-3 rounded-lg text-white font-semibold'>Spotify</button>
+            <button className='bg-[#545B67] lg:py-5 py-3 rounded-lg text-white font-semibold'>Wallet</button>
+            <button className='bg-[#767C85] lg:py-5 py-3 rounded-lg text-white font-semibold'>Youtube</button>
+          </div>
+        }
+      />
+      <Banner
         title={
-          <div className='px-4 py-2 rounded-full border-2 border-white bg-transparent flex space-x-3 text-white text-xl font-semibold bg-[url("https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png")]'>
+          <div className='md:px-4 md:py-2 py-1 px-2 rounded-full border-2 border-white bg-transparent flex md:space-x-3 space-x-1 text-white text-lg md:text-xl font-semibold bg-[url("https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png")]'>
             <span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -85,8 +101,8 @@ function Home() {
           </div>
         }
         img='https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png'
-        bgcolor='bg-[#000D21]'
-        products={Array(12).fill(0)}
+        content={<Paging products={Array(12).fill(0)} bgColor='bg-[#000D21]' />}
+        hasButton={true}
       />
     </div>
   )
