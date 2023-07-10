@@ -294,7 +294,7 @@ function Header() {
         </div>
       </div>
       <div className='bg-white text-gray-700 font-semibold lg:block hidden'>
-        <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-3 flex items-center justify-between'>
+        <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-2 flex items-center justify-between'>
           <button className='flex space-x-1 xl:space-x-2'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -311,6 +311,7 @@ function Header() {
           <div className='flex xl:space-x-6 space-x-4'>
             <button className='flex items-center xl:space-x-2 space-x-1'>
               <img
+                className='scale-90'
                 src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Nap-thesvg-30724.svg?hash=1640449820'
                 alt='thuthuat&tintucpicture'
               />
@@ -318,20 +319,23 @@ function Header() {
             </button>
             <button className='flex items-center xl:space-x-2 space-x-1'>
               <img
+                className='scale-90'
                 src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Gioi-thieu-ban-be-87652.svg?hash=1640449820'
                 alt='gioithieubanbepicture'
               />
               <span>Giới thiệu bạn bè</span>
             </button>
-            <button className='flex items-center space-x-2'>
+            <button className='flex items-center xl:space-x-2 space-x-1'>
               <img
+                className='scale-90'
                 src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Lien-he-hop-tac-33199.svg?hash=1640449820'
                 alt='lienhehoptacpicture'
               />
               <span>Liên hệ hợp tác</span>
             </button>
-            <button className='flex items-center space-x-2'>
+            <button className='flex items-center xl:space-x-2 space-x-1'>
               <img
+                className='scale-90'
                 src='https://cdn.divineshop.vn/image/catalog/Anh/Icon%20svg/Uu-dai-khach-vip-79547.svg?hash=1640449820'
                 alt='uudaikhachhangvippicture'
               />
