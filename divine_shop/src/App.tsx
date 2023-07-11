@@ -21,11 +21,11 @@ function App() {
           <Route path='search' element={<ProductList />} />
           <Route path=':productId' element={<ProductDetail />} />
           <Route path='user' element={<User />}>
-            <Route index element={<Profile />} />
-            <Route index element={<Password />} />
-            <Route index element={<OrderHistory />} />
-            <Route index element={<FavorateProduct />} />
-            <Route index element={<MyCmt />} />
+            <Route path='profile' element={<Profile />} />
+            <Route path='password' element={<Password />} />
+            <Route path='history' element={<OrderHistory />} />
+            <Route path='favorate' element={<FavorateProduct />} />
+            <Route path='my-cmt' element={<MyCmt />} />
           </Route>
         </Route>
       </Routes>
