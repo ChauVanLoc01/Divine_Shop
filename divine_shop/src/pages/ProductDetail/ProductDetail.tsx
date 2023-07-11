@@ -1,9 +1,9 @@
-import Cmt from './Cmt'
+import CmtPaging from './CmtPaging'
 import CreateCmt from './CreateCmt'
 
 function ProductDetail() {
   return (
-    <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm md:py-5 py-2 border-t-[1px] border-gray-200 space-y-2 md:space-y-5'>
+    <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm md:py-5 py-2 border-t-[1px] border-gray-200 space-y-3 md:space-y-5'>
       <div className='flex md:flex-row flex-col md:gap-x-6 gap-y-3'>
         <div className='basis-2/5'>
           <img
@@ -13,7 +13,7 @@ function ProductDetail() {
           />
         </div>
         <div className='basis-3/5 md:space-y-6 space-y-5'>
-          <div className='md:space-y-2 space-y-1'>
+          <div className='space-y-2'>
             <div>Sản phẩm</div>
             <div className='text-3xl font-semibold'>Tài khoản Battlefield 4 (EA)</div>
             <div className='flex space-x-2'>
@@ -84,7 +84,7 @@ function ProductDetail() {
             </div>
           </div>
           <div className='space-x-4 flex'>
-            <button className='text-white space-x-2 hover:bg-[#2579F2]/90 transition-all duration-100 ease-linear bg-[#2579F2] px-5 py-2 rounded-md flex'>
+            <button className='text-white space-x-2 hover:bg-[#2579F2]/90 transition-all duration-100 ease-linear bg-[#2579F2] px-5 py-2 rounded-md flex ring-2 ring-[#2579F2]/90 hover:ring-[#2579F2]'>
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -126,7 +126,7 @@ function ProductDetail() {
         </div>
       </div>
       <CreateCmt />
-      <Cmt />
+      <CmtPaging />
     </div>
   )
 }

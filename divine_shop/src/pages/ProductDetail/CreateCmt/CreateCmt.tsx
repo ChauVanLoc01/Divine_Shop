@@ -1,16 +1,17 @@
 function CreateCmt() {
   return (
-    <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm space-y-3'>
+    <div className='space-y-3'>
       <div className='font-semibold text-xl'>Bình luận</div>
       <div className='space-y-2'>
         <div>Thời gian phản hồi trung bình: 5 phút!</div>
         <textarea
-          className='bg-white w-full ring-1 rounded-md ring-gray-300 active:ring-1 active:ring-[#2579F2]'
-          id=''
+          id='message'
           rows={7}
+          className='block px-4 py-3 w-full text-gray-900 bg-gray-50 rounded-lg ring-2 ring-gray-300 focus:ring-[#2579F2] focus:ring-2 outline-none'
+          placeholder='Viết bình luận vào đây...'
         />
-        <div className=''>
-          <button className='rounded-md px-3 py-2 bg-[#2579F2] text-white space-x-2 flex items-center'>
+        <div className='flex justify-end py-2'>
+          <button className='rounded-md px-3 py-2 bg-[#2579F2] text-white space-x-2 flex items-center ring-2 ring-[#2579F2]/80 hover:ring-[#2579F2] hover:bg-[#2579F2]/90'>
             <span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -18,7 +19,7 @@ function CreateCmt() {
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='w-4 h-4'
+                className='w-4 h-4 stroke-2'
               >
                 <path
                   strokeLinecap='round'
