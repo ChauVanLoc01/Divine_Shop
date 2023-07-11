@@ -7,8 +7,20 @@ function Information() {
         <div>Vui lòng không thay đổi thông tin tài khoản</div>
       </div>
       <div className='flex md:flex-row flex-col md:gap-x-5'>
-        <div className='md:text-2xl text-xl font-bold basis-1/3'>Chính sách bảo hành</div>
-        <div className='basis-2/3 py-2 space-y-3'>
+        <div className='md:text-2xl text-xl font-bold basis-1/4'>Chi tiết sản phẩm</div>
+        <div className='basis-3/4 py-2'>
+          Lynda (LinkedIn Learning) là trang web tổ chức các khóa học trực tuyến hàng đầu tại Mỹ. Lynda cung cấp rất
+          nhiều khóa học chất lượng được giảng dậy bởi các chuyên gia từ rất nhiều ngành nghề. Với thư viện khóa học cực
+          lớn, số lượng Video hướng dẫn được cập nhật thường xuyên mỗi ngày, và đặc biệt chất lượng các khóa học online
+          ở Lynda luôn được đánh giá cao trên thế giới. Lợi ích khi sử dụng tài khoản Lynda Không giới hạn khóa học, học
+          đến khi nào ngất thì thôi. Xem video khóa học trên nhiều thiết bị: Máy tính, máy tính bảng, điện thoại, TV...
+          Thực hành khi học lý thuyết. Gần như tất cả khóa học trên Lynda đều kèm Transcript (sub khác nha). Transcript
+          cho phép bạn copy tất cả nội dung text trong video. Có thể download khóa học về để xem offline.
+        </div>
+      </div>
+      <div className='flex md:flex-row flex-col md:gap-x-5'>
+        <div className='md:text-2xl text-xl font-bold basis-1/4'>Chính sách bảo hành</div>
+        <div className='basis-3/4 py-2 space-y-3'>
           <div className='space-y-2'>
             <span className='font-bold'>Thời gian bảo hành</span>
             <div className='px-10'>- 1 năm</div>
