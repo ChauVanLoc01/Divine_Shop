@@ -10,6 +10,7 @@ import Password from './pages/User/Password'
 import OrderHistory from './pages/User/OrderHistory'
 import FavorateProduct from './pages/User/FavorateProduct'
 import MyCmt from './pages/User/MyCmt'
+import OrderDetail from './pages/User/OrderHistory/OrderDetail'
 
 function App() {
   return (
@@ -23,7 +24,9 @@ function App() {
           <Route path='user' element={<User />}>
             <Route path='profile' element={<Profile />} />
             <Route path='password' element={<Password />} />
-            <Route path='history' element={<OrderHistory />} />
+            <Route path='history' element={<OrderHistory />}>
+              <Route path=':orderId' element={<OrderDetail />} />
+            </Route>
             <Route path='favorate' element={<FavorateProduct />} />
             <Route path='my-cmt' element={<MyCmt />} />
           </Route>

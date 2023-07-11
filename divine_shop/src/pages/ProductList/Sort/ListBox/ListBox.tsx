@@ -20,8 +20,8 @@ function ListBox({ title }: ListBoxProps) {
   return (
     <Listbox value={selected} onChange={setSelected}>
       <div className='relative border-[1px] border-gray-300 rounded-md'>
-        <Listbox.Button className='relative w-full cursor-pointer text-left pt-4 pl-4 rounded-md bg-white focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 z-50'>
-          <span className='absolute top-0 left-4 text-sm text-gray-400'>{title}</span>
+        <Listbox.Button className='relative w-full cursor-pointer text-left pt-4 pl-5 rounded-md bg-white focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 z-10'>
+          <span className='absolute top-0 left-5 text-sm text-gray-400'>{title}</span>
           <span className='truncate'>{selected.name}</span>
           <span className='pointer-events-none absolute top-1/2 -translate-y-1/2 right-4 flex'>
             <svg

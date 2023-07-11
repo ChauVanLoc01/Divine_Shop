@@ -4,7 +4,7 @@ function User() {
   return (
     <div className='bg-[#F3F4F6]'>
       <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-2 md:py-4 md:space-y-4 space-y-2'>
-        <div className='rounded-md bg-white lg:w-fit w-full shadow-sm border border-gray-100 p-1 flex flex-wrap lg:justify-start justify-evenly'>
+        <div className='rounded-lg bg-white lg:w-fit w-full border border-gray-100 p-1 flex flex-wrap lg:justify-start justify-evenly'>
           <button className='px-5 py-2 bg-transparent rounded-md visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
             <span>
               <svg
