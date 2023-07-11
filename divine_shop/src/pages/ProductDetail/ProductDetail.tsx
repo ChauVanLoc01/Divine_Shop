@@ -1,10 +1,11 @@
 import CmtPaging from './CmtPaging'
 import CreateCmt from './CreateCmt'
+import Information from './Information/Information'
 
 function ProductDetail() {
   return (
     <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm md:py-5 py-2 border-t-[1px] border-gray-200 space-y-3 md:space-y-5'>
-      <div className='flex md:flex-row flex-col md:gap-x-6 gap-y-3'>
+      <div className='flex md:flex-row flex-col md:gap-x-6 gap-y-3 bg-white'>
         <div className='basis-2/5'>
           <img
             className='bg-cover w-full rounded-md'
@@ -125,6 +126,7 @@ function ProductDetail() {
           </div>
         </div>
       </div>
+      <Information />
       <CreateCmt />
       <CmtPaging />
     </div>
