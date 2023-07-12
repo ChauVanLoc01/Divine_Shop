@@ -11,6 +11,7 @@ import OrderHistory from './pages/User/OrderHistory'
 import FavorateProduct from './pages/User/FavorateProduct'
 import MyCmt from './pages/User/MyCmt'
 import OrderDetail from './pages/User/OrderHistory/OrderDetail'
+import Cart from './pages/Cart'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path='favorate' element={<FavorateProduct />} />
             <Route path='my-cmt' element={<MyCmt />} />
           </Route>
+          <Route path='cart' element={<Cart />} />
         </Route>
       </Routes>
       <Footer />

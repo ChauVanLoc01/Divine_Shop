@@ -7,7 +7,7 @@ function CreateCmt() {
         <textarea
           id='message'
           rows={7}
-          className='block px-4 py-3 w-full text-gray-900 bg-gray-50 rounded-lg ring-2 ring-gray-300 focus:ring-[#2579F2] focus:ring-2 outline-none'
+          className='block px-4 py-3 w-full text-gray-900 bg-white rounded-lg ring-2 ring-gray-300 focus:ring-[#2579F2] focus:ring-2 outline-none'
           placeholder='Viết bình luận vào đây...'
         />
         <div className='flex justify-end py-2'>
