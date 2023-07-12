@@ -5,29 +5,29 @@ function OrderHistory() {
   return (
     <div className='rounded-lg bg-white border border-gray-100 p-2 md:p-5 space-y-2 md:space-y-5'>
       <div className='flex flex-wrap gap-x-5 gap-y-3'>
-        <div className='group lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-full rounded-md relative ring-1 ring-gray-300 overflow-hidden flex justify-center'>
-          <label className='absolute top-0 left-4 text-sm text-gray-400' htmlFor='start'>
-            Mã đơn hàng
-          </label>
-          <input
-            className='w-11/12 group-fo outline-none lg:px-2 md:px-3 pt-4'
-            type='text'
-            name=''
-            id='start'
-            placeholder='ví dụ 111111'
-          />
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-full rounded-md ring-1 ring-gray-300 overflow-hidden'>
+          <div className='relative mx-auto w-[88%] md:w-9/12 lg:w-10/12'>
+            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='id'>
+              Mã đơn hàng
+            </label>
+            <input className='w-full outline-none pt-4' placeholder='ví dụ: 1111' type='text' name='' id='id' />
+          </div>
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md relative ring-1 ring-gray-300 overflow-hidden flex justify-center'>
-          <label className='absolute top-0 left-5 text-sm text-gray-400' htmlFor='start'>
-            Ngày bắt đầu
-          </label>
-          <input className='w-11/12 outline-none px-2 pt-4' type='date' name='' id='start' />
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md ring-1 ring-gray-300 overflow-hidden'>
+          <div className='relative mx-auto w-9/12 lg:w-10/12'>
+            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='start'>
+              Ngày bắt đầu
+            </label>
+            <input className='w-full outline-none pt-4' type='date' name='' id='start' />
+          </div>
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md relative ring-1 ring-gray-300 overflow-hidden flex justify-center'>
-          <label className='absolute top-0 left-5 text-sm text-gray-400' htmlFor='start'>
-            Ngày kết thúc
-          </label>
-          <input className='w-11/12 outline-none px-2 pt-4' type='date' name='' id='start' />
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md  ring-1 ring-gray-300 overflow-hidden'>
+          <div className='relative mx-auto w-9/12 lg:w-10/12'>
+            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='start'>
+              Ngày kết thúc
+            </label>
+            <input className='w-full outline-none pt-4' type='date' name='' id='end' />
+          </div>
         </div>
         <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%]'>
           <ListBox title='Trạng thái' />
