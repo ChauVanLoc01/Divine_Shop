@@ -2,7 +2,7 @@ import NumberInput from 'src/Components/NumberInput'
 
 function ProductInCart() {
   return (
-    <div className='flex md:flex-row flex-col md:gap-x-4 md:gap-y-0 gap-y-3'>
+    <div className='flex md:flex-row flex-col md:gap-x-5 md:gap-y-0 gap-y-3'>
       <div className='basis-1/3 overflow-hidden'>
         <img
           className='w-full bg-cover rounded-md'
@@ -10,7 +10,7 @@ function ProductInCart() {
           alt='picture'
         />
       </div>
-      <div className='basis-2/3 xl:basis-1/2 space-y-3 divide-y divide-gray-200'>
+      <div className='basis-2/3 space-y-3 divide-y divide-gray-200'>
         <div className='space-y-3'>
           <div>
             <div className='font-medium line-clamp-2 text-base md:text-lg'>
