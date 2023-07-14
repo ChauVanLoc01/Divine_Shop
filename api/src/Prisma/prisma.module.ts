@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from 'src/Guards/Strategy/LocalStrategy';
+import { LocalStrategy } from 'src/Strategy/LocalStrategy';
 import { JwtService, JwtModule } from '@nestjs/jwt';
 import { PrismaService } from './prisma.service';
 

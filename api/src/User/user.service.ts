@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/Prisma/prisma.service';
 import { user as UserModel } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UserAfterAuthen } from 'src/Types/UserAfterAuthen.type';
 import { JwtService } from '@nestjs/jwt';
+import { uuid } from 'uuidv4';
 
 @Injectable()
 export class UserService {
@@ -63,6 +64,14 @@ export class UserService {
 
   async register(user_name: string, email: string, password: string) {
     const hash = await this.hashPassword(password);
-    return this.prisma.user.create({});
+    return await this.prisma.user.create({
+      data: {
+        user_id: uuid(),
+        user_name,
+        email,
+        password: hash,
+        role: 'user',
+      },
+    });
   }
 }
