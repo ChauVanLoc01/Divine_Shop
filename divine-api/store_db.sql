@@ -1,6 +1,3 @@
-create database store_db;
-use store_db;
-
 create table user(
 	user_id int auto_increment primary key,
 	name varchar(50),

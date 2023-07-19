@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cmt {
+  cmt_id  Int       @id @default(autoincrement())
+  content String    @db.Text
+  created DateTime? @default(now()) @db.Timestamp(0)
+  updated DateTime? @db.Timestamp(0)
+  user_id Int
+  item_id String    @db.VarChar(100)
+  user    user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_1")
+  item    item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_2")
+
+  @@index([item_id], map: "item_id")
+  @@index([user_id], map: "user_id")
+}
+
+model item {
+  item_id             String    @id @db.VarChar(100)
+  item_name           String    @db.VarChar(500)
+  price               Float
+  priceBeforeDiscount Float
+  quantity            Int
+  sold                Int
+  description         String?   @db.Text
+  created             DateTime? @default(now()) @db.Timestamp(0)
+  updated             DateTime? @db.Timestamp(0)
+  cmt                 cmt[]
+}
+
+model order {
+  order_id     Int            @id @default(autoincrement())
+  status       order_status
+  created      DateTime?      @default(now()) @db.Timestamp(0)
+  user_id      Int
+  user         user           @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
+  order_detail order_detail[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model order_detail {
+  order_detail_id Int   @id @default(autoincrement())
+  items           Json
+  order_id        Int
+  order           order @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "order_detail_ibfk_1")
+
+  @@index([order_id], map: "order_id")
+}
+
+model user {
+  user_id  Int        @id @default(autoincrement())
+  name     String?    @db.VarChar(50)
+  email    String     @db.VarChar(100)
+  password String?    @db.VarChar(100)
+  avatar   String?    @db.VarChar(500)
+  role     user_role? @default(dbgenerated("(_utf8mb4\\'user\\')"))
+  isActive Boolean?   @default(true)
+  created  DateTime?  @default(now()) @db.Timestamp(0)
+  updated  DateTime?  @db.Timestamp(0)
+  cmt      cmt[]
+  order    order[]
+}
+
+enum order_status {
+  success
+  fail
+}
+
+enum user_role {
+  admin
+  user
+}
