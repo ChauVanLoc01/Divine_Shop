@@ -1,9 +1,14 @@
 FROM node:18-alpine
+
 WORKDIR /app
+
 COPY package*.json .
+COPY yarn.lock .
+
 RUN yarn install
-COPY ./dist .
-COPY ./prisma .
-COPY ./.env .
-COPY ./nest-cli.json .
-CMD [ "yarn", "prod" ]
+
+COPY . .
+
+RUN yarn prisma generate
+
+CMD [ "yarn", "dev" ]

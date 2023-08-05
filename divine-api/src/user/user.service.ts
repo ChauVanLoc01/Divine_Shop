@@ -6,12 +6,14 @@ import { UserWithGoogle } from '../types/ReqWithGoogle.type';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { Response } from '../types/Response.type';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async hashPassword(password: string) {
@@ -35,7 +37,7 @@ export class UserService {
       return 'Password incorrect';
     }
     if (!user.isActive) {
-      return 'Your account was blocked';
+      return 'Your account is blocked';
     }
     return user;
   }
@@ -61,7 +63,7 @@ export class UserService {
 
   async login(user: UserWithLocal): Promise<Response<{ accessToken: string }>> {
     return {
-      message: 'Wellcome to My Store',
+      message: 'Wellcome to Van Loc Store',
       data: {
         accessToken: this.createAccessToken(user),
       },
@@ -106,6 +108,7 @@ export class UserService {
   async register(
     email: string,
     password: string,
+    name: string,
   ): Promise<Response<{ accessToken: string }>> {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -122,11 +125,30 @@ export class UserService {
         password: hash,
       },
     });
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Welcome to my website',
+      template: './wellCome',
+      context: {
+        name,
+      },
+    });
     return {
       message: 'Register successfull',
       data: {
         accessToken: this.createAccessToken({ role, user_id }),
       },
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new HttpException('Email is not exist!', HttpStatus.BAD_REQUEST);
+    }
   }
 }

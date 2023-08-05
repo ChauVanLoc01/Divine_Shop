@@ -6,6 +6,8 @@ import { ValidationError } from 'class-validator';
 import { CustomValidationError } from './types/CustomValidationError.type';
 import { Response } from './types/Response.type';
 
+declare const module: any;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -41,6 +43,11 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.STORE_PORT || 3000);
+  await app.listen(process.env.STORE_PORT || 1234);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

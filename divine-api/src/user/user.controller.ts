@@ -7,6 +7,7 @@ import { ReqWithLocal } from '../types/ReqWithLocal.type';
 import { RegisterDTO } from './dto/register.dto';
 import { ReqWithGoogle } from '../types/ReqWithGoogle.type';
 import { GoogleGuard } from '../guards/google.guard';
+import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 
 @Controller()
 export class UserController {
@@ -29,12 +30,12 @@ export class UserController {
   }
 
   @Post('register')
-  register(@Body() { email, password }: RegisterDTO) {
-    return this.userService.register(email, password);
+  register(@Body() { email, password, name }: RegisterDTO) {
+    return this.userService.register(email, password, name);
   }
 
-  @Get()
-  wellcome() {
-    return 'Hello World';
+  @Post('forgot-password')
+  forgotPassword(@Body() { email }: ForgotPasswordDTO) {
+    return this.userService.forgotPassword(email);
   }
 }

@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -14,7 +14,7 @@ model cmt {
   created DateTime? @default(now()) @db.Timestamp(0)
   updated DateTime? @db.Timestamp(0)
   user_id Int
-  item_id String    @db.VarChar(100)
+  item_id Int
   user    user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_1")
   item    item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_2")
 
@@ -23,36 +23,32 @@ model cmt {
 }
 
 model item {
-  item_id             String    @id @db.VarChar(100)
-  item_name           String    @db.VarChar(500)
+  item_id             Int           @id @default(autoincrement())
+  item_name           String        @db.VarChar(500)
   price               Float
   priceBeforeDiscount Float
   quantity            Int
   sold                Int
-  description         String?   @db.Text
-  created             DateTime? @default(now()) @db.Timestamp(0)
-  updated             DateTime? @db.Timestamp(0)
+  description         String?       @db.Text
+  created             DateTime?     @default(now()) @db.Timestamp(0)
+  updated             DateTime?     @db.Timestamp(0)
   cmt                 cmt[]
+  itemInOrder         itemInOrder[]
 }
 
 model order {
-  order_id     Int            @id @default(autoincrement())
-  status       order_status
-  created      DateTime?      @default(now()) @db.Timestamp(0)
-  user_id      Int
-  user         user           @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
-  order_detail order_detail[]
+  order_id    Int           @id @default(autoincrement())
+  status      order_status? @default(dbgenerated("(_utf8mb4\\'waiting-confirm\\')"))
+  total       Float         @db.Float
+  discount    Float
+  note        String?       @db.VarChar(500)
+  created     DateTime?     @default(now()) @db.Timestamp(0)
+  updated     DateTime?     @db.Timestamp(0)
+  user_id     Int
+  itemInOrder itemInOrder[]
+  user        user          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
 
   @@index([user_id], map: "user_id")
-}
-
-model order_detail {
-  order_detail_id Int   @id @default(autoincrement())
-  items           Json
-  order_id        Int
-  order           order @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "order_detail_ibfk_1")
-
-  @@index([order_id], map: "order_id")
 }
 
 model user {
@@ -61,6 +57,7 @@ model user {
   email    String     @db.VarChar(100)
   password String?    @db.VarChar(100)
   avatar   String?    @db.VarChar(500)
+  point    Int?
   role     user_role? @default(dbgenerated("(_utf8mb4\\'user\\')"))
   isActive Boolean?   @default(true)
   created  DateTime?  @default(now()) @db.Timestamp(0)
@@ -69,12 +66,23 @@ model user {
   order    order[]
 }
 
-enum order_status {
-  success
-  fail
+model itemInOrder {
+  order_id Int
+  item_id  Int
+  order    order @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_1")
+  item     item  @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_2")
+
+  @@id([order_id, item_id])
+  @@index([item_id], map: "item_id")
 }
 
 enum user_role {
   admin
   user
+}
+
+enum order_status {
+  waiting_confirm @map("waiting-confirm")
+  success
+  cancel
 }
