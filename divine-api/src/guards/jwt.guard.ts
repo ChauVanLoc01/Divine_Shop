@@ -1,30 +1,61 @@
-import { Injectable, ExecutionContext } from '@nestjs/common';
-import { UnauthorizedException } from '@nestjs/common/exceptions/unauthorized.exception';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { ADMIN_KEY } from '../Metadata/role.metadata';
+import { UserWithLocal } from '../types/ReqWithLocal.type';
 import { IS_PUBLIC_KEY } from '../Metadata/public.metadata';
 
 @Injectable()
-export class JwtGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
-    super();
-  }
+export class JwtGuard implements CanActivate {
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+  ) {}
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
+
     if (isPublic) {
       return true;
     }
-    return super.canActivate(context);
+
+    const isAdmin = this.reflector.getAllAndOverride(ADMIN_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    const token = this.extractTokenFromHeader(request);
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+    try {
+      const payload: UserWithLocal = await this.jwtService.verifyAsync(token, {
+        secret: process.env.SECRET_ACCESS_TOKEN,
+      });
+      if (isAdmin && payload.role !== 'admin') {
+        console.log('a');
+        throw new UnauthorizedException('Permission denied');
+      }
+      request['user'] = payload;
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
+    return true;
   }
 
-  handleRequest(err, user, info) {
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
-    return user;
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

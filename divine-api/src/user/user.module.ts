@@ -5,30 +5,20 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../strategies/local.strategy';
 import { GoogleStrategy } from '../strategies/google.strategy';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { BullModule } from '@nestjs/bull';
+import { MailConsummer } from '../consummers/mail.consummer';
 
 @Module({
   imports: [
-    PassportModule,
+    BullModule.registerQueue({
+      name: 'email',
+    }),
     JwtModule.register({
       secret: process.env.SECRET_ACCESS_TOKEN,
     }),
-    MailerModule.forRoot({
-      transport: process.env.MAIL_TRANSPORT,
-      defaults: {
-        from: `No reply <${process.env.MAIL_FROM}>`,
-      },
-      template: {
-        dir: __dirname + '/templates',
-        adapter: new HandlebarsAdapter(),
-        options: {
-          strict: true,
-        },
-      },
-    }),
+    PassportModule,
   ],
   controllers: [UserController],
-  providers: [UserService, LocalStrategy, GoogleStrategy],
+  providers: [UserService, LocalStrategy, GoogleStrategy, MailConsummer],
 })
 export class UserModule {}

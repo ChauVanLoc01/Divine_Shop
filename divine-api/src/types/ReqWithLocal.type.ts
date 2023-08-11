@@ -1,10 +1,10 @@
-import { Req } from '@nestjs/common/decorators';
+import { Request } from 'express';
 
 export type UserWithLocal = {
   user_id: number;
   role: 'admin' | 'user';
 };
 
-export type ReqWithLocal = typeof Req & {
+export type ReqWithLocal = Request & {
   user: UserWithLocal;
 };

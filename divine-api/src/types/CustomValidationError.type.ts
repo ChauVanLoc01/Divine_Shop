@@ -1,6 +1,4 @@
-export type CustomValidationError = {
-  property: string;
-  errors: {
-    [index: string]: string;
-  };
-};
+export type CustomValidationError = [
+  key: string,
+  value: { [key: string]: string },
+];
