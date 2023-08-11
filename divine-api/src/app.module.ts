@@ -11,6 +11,7 @@ import { ItemModule } from './item/item.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { join } from 'path';
     PrismaModule,
     ItemModule,
     JwtModule,
+    OrderModule,
   ],
   providers: [
     {
