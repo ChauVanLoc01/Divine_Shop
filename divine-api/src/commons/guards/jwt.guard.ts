@@ -8,7 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ADMIN_KEY } from '../Metadata/role.metadata';
-import { UserWithLocal } from '../types/ReqWithLocal.type';
+import { UserWithLocal } from '../../types/ReqWithLocal.type';
 import { IS_PUBLIC_KEY } from '../Metadata/public.metadata';
 
 @Injectable()

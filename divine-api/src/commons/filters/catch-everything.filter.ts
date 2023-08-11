@@ -3,10 +3,11 @@ import {
   Catch,
   ArgumentsHost,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
-import { FailResponse } from '../types/Response.type';
+import { FailResponse } from '../../types/Response.type';
 import { Prisma } from '@prisma/client';
-import { MyException } from './my.exception';
+import { MyException } from './my.filter';
 
 @Catch()
 export class CatchEveryThing implements ExceptionFilter {

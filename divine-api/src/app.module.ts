@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtGuard } from './guards/jwt.guard';
+import { JwtGuard } from './commons/guards/jwt.guard';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ItemModule } from './item/item.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -34,6 +36,9 @@ import { JwtModule } from '@nestjs/jwt';
       defaults: {
         from: `No reply <${process.env.MAIL_FROM}>`,
       },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public/images'),
     }),
     UserModule,
     PrismaModule,

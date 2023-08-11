@@ -1,17 +1,11 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  ValidationPipe,
-} from '@nestjs/common';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { CustomValidationError } from './types/CustomValidationError.type';
-import { FailResponse } from './types/Response.type';
-import { MyException } from './exceptions/my.exception';
-import { CatchEveryThing } from './exceptions/catch-everything.exception';
+import { MyException } from './commons/filters/my.filter';
+import { CatchEveryThing } from './commons/filters/catch-everything.filter';
 const cookieParser = require('cookie-parser');
 
 declare const module: any;
@@ -20,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('Store Api')
@@ -28,8 +23,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-
-  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -12,7 +12,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { omit } from 'lodash';
 import { SuccessResponse } from '../types/Response.type';
-import { MyException } from '../exceptions/my.exception';
+import { MyException } from '../commons/filters/my.filter';
 
 @Injectable()
 export class UserService {

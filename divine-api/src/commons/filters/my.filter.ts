@@ -1,5 +1,8 @@
 import { HttpException } from '@nestjs/common';
-import { FailResponse, ValidationFailResponse } from '../types/Response.type';
+import {
+  FailResponse,
+  ValidationFailResponse,
+} from '../../types/Response.type';
 
 export class MyException extends HttpException {
   constructor(private data: ValidationFailResponse | FailResponse) {

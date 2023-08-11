@@ -4,6 +4,7 @@ import {
   Delete,
   FileTypeValidator,
   Get,
+  HttpStatus,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
@@ -16,11 +17,15 @@ import {
 import { ItemService } from './item.service';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ItemQueryDTO } from './dto/item-query.dto';
-import { Public } from '../Metadata/public.metadata';
-import { Admin } from '../Metadata/role.metadata';
+import { Public } from '../commons/Metadata/public.metadata';
+import { Admin } from '../commons/Metadata/role.metadata';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateItemDTO } from './dto/create-item.dto';
 import { omit } from 'lodash';
+import { MyException } from '../commons/filters/my.filter';
+import { Express } from 'express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @ApiTags('Items')
 @Controller('items')
@@ -66,23 +71,43 @@ export class ItemController {
   @ApiBody({
     type: CreateItemDTO,
   })
-  @UseInterceptors(FileInterceptor('image', {}))
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: process.cwd() + '/public/images',
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname);
+          const filename = `${uniqueSuffix}${ext}`;
+          callback(null, filename);
+        },
+      }),
+    }),
+  )
   create(
     @UploadedFile(
       new ParseFilePipe({
+        exceptionFactory(error) {
+          throw new MyException({
+            status_code: HttpStatus.BAD_REQUEST,
+            message: error,
+          });
+        },
         validators: [
-          new MaxFileSizeValidator({ maxSize: Number(process.env.SIZE_IMAGE) }),
+          new MaxFileSizeValidator({ maxSize: 5000000 }),
           new FileTypeValidator({ fileType: 'image/*' }),
         ],
+        fileIsRequired: true,
       }),
     )
     file: Express.Multer.File,
     @Body() body: CreateItemDTO,
   ) {
-    // return this.itemService.createItem({
-    //   ...omit(body, 'image'),
-    //   image: file.filename
-    // });
+    return this.itemService.createItem({
+      ...omit(body, ['image']),
+      image: `${process.env.HOST_STORE}${file.filename}`,
+    });
   }
 
   @Admin()

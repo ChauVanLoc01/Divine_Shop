@@ -2,13 +2,13 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { plainToClass } from 'class-transformer';
 import { Strategy } from 'passport-local';
-import { CustomValidationError } from '../types/CustomValidationError.type';
-import { LoginDTO } from '../user/dto/login.dto';
-import { UserService } from '../user/user.service';
+import { CustomValidationError } from '../../types/CustomValidationError.type';
+import { LoginDTO } from '../../user/dto/login.dto';
+import { UserService } from '../../user/user.service';
 import { validate, ValidationError } from 'class-validator';
 import { user } from '@prisma/client';
-import { UserWithLocal } from '../types/ReqWithLocal.type';
-import { MyException } from '../exceptions/my.exception';
+import { UserWithLocal } from '../../types/ReqWithLocal.type';
+import { MyException } from '../filters/my.filter';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

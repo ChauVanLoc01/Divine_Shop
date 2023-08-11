@@ -1,8 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SuccessResponse } from '../types/Response.type';
 import { Prisma, item } from '@prisma/client';
 import { isUndefined, omitBy } from 'lodash';
+import { MyException } from '../commons/filters/my.filter';
 
 @Injectable()
 export class ItemService {
@@ -15,7 +21,10 @@ export class ItemService {
       },
     });
     if (!item) {
-      throw new NotFoundException('Item is not exist!');
+      throw new MyException({
+        status_code: HttpStatus.NOT_FOUND,
+        message: 'Item is not exist',
+      });
     }
     return {
       message: 'Get item detail successfully',
@@ -141,7 +150,10 @@ export class ItemService {
       },
     });
     if (!item) {
-      throw new NotFoundException('Item is not exist!');
+      throw new MyException({
+        status_code: HttpStatus.NOT_FOUND,
+        message: 'Item is not exist',
+      });
     }
     await this.prisma.item.delete({
       where: {
@@ -154,16 +166,15 @@ export class ItemService {
     };
   }
 
-  // async createItem(
-  //   data: Omit<Prisma.itemCreateInput, 'item_name'>,
-  // ): Promise<SuccessResponse<item>> {
-  //   const item = await this.prisma.item.create({
-  //     data: {
-  //     }
-  //   });
-  //   return {
-  //     message: 'Create item successfully',
-  //     data: item,
-  //   };
-  // }
+  async createItem(
+    data: Prisma.itemCreateInput,
+  ): Promise<SuccessResponse<item>> {
+    const item = await this.prisma.item.create({
+      data,
+    });
+    return {
+      message: 'Create item successfully',
+      data: item,
+    };
+  }
 }

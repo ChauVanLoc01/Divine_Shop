@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsPositive,
 } from 'class-validator';
-import { GreaterThan } from '../../decorators/greater-than.decorator';
+import { GreaterThan } from '../../commons/decorators/greater-than.decorator';
 import { Transform } from 'class-transformer';
 
 export class ItemQueryDTO {

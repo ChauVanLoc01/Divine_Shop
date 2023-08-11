@@ -1,13 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEnum,
+  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
   Length,
 } from 'class-validator';
-import { GreaterThan } from '../../decorators/greater-than.decorator';
+import { GreaterThan } from '../../commons/decorators/greater-than.decorator';
+import { Transform } from 'class-transformer';
 
 export class CreateItemDTO {
   @ApiProperty({
@@ -28,7 +31,8 @@ export class CreateItemDTO {
   @ApiProperty({
     required: true,
   })
-  @IsPositive({ message: 'Price is a positive number' })
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
   @IsNotEmpty({ message: 'Price is not empty' })
   price: number;
 
@@ -36,13 +40,15 @@ export class CreateItemDTO {
     description: 'Price before discount is must greater than price',
   })
   @GreaterThan('price')
-  @IsPositive({ message: 'Price before discount is a positive number' })
   @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsNumber()
   priceBeforeDiscount?: number;
 
   @ApiProperty({ required: true })
-  @IsPositive({ message: 'Quantity is a postive number' })
   @IsNotEmpty({ message: 'Quantity is not empty' })
+  @Transform(({ value }) => Number(value))
+  @IsInt()
   quantity: number;
 
   @ApiPropertyOptional()

@@ -10,18 +10,18 @@ import {
   Res,
 } from '@nestjs/common/decorators';
 import { UserService } from './user.service';
-import { LocalGuard } from '../guards/local.guard';
+import { LocalGuard } from '../commons/guards/local.guard';
 import { LoginDTO } from './dto/login.dto';
 import { ReqWithLocal } from '../types/ReqWithLocal.type';
 import { RegisterDTO } from './dto/register.dto';
 import { ReqWithGoogle } from '../types/ReqWithGoogle.type';
-import { GoogleGuard } from '../guards/google.guard';
+import { GoogleGuard } from '../commons/guards/google.guard';
 import { ResetPasswordDTO } from './dto/reset-password.dto';
-import { Public } from '../Metadata/public.metadata';
+import { Public } from '../commons/Metadata/public.metadata';
 import { Response } from 'express';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Admin } from '../Metadata/role.metadata';
+import { Admin } from '../commons/Metadata/role.metadata';
 
 @ApiTags('Users')
 @Controller()
