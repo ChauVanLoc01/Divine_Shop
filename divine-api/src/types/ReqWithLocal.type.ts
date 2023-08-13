@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 export type UserWithLocal = {
-  user_id: number;
+  user_id: string;
   role: 'admin' | 'user';
 };
 

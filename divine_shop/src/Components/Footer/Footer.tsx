@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <div className='text-center py-10 bg-[#F3F4F6]'>
+    <div className='text-center py-10 bg-[#F3F4F6] px-4'>
       <div className='space-y-4'>
         <div className='font-semibold text-xl'>Giới thiệu</div>
         <div>

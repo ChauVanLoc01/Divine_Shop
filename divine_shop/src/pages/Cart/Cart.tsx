@@ -3,7 +3,7 @@ import ProductInCart from './ProductInCart'
 function Cart() {
   return (
     <div className='bg-[#F3F4F6] md:p-5 p-2 xl:py-5'>
-      <div className='xl:max-w-7xl xl:mx-auto md:text-base text-sm md:p-5 p-2 bg-white rounded-md'>
+      <div className='xl:max-w-5xl xl:mx-auto md:text-base text-sm md:p-5 p-2 bg-white rounded-md'>
         <div className='bg-white flex lg:flex-row flex-col rounded-md lg:space-y-0 space-y-4 lg:space-x-5'>
           <div className='basis-4/6 xl:basis-3/5 space-y-4 md:space-y-7'>
             <ProductInCart />

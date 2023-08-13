@@ -17,23 +17,25 @@ function App() {
   return (
     <div>
       <Header />
-      <Routes>
-        <Route path='/'>
-          <Route index element={<Home />} />
-          <Route path='search' element={<ProductList />} />
-          <Route path=':productId' element={<ProductDetail />} />
-          <Route path='user' element={<User />}>
-            <Route path='profile' element={<Profile />} />
-            <Route path='password' element={<Password />} />
-            <Route path='history' element={<OrderHistory />}>
-              <Route path=':orderId' element={<OrderDetail />} />
+      <div>
+        <Routes>
+          <Route path='/'>
+            <Route index element={<Home />} />
+            <Route path='search' element={<ProductList />} />
+            <Route path=':productId' element={<ProductDetail />} />
+            <Route path='user' element={<User />}>
+              <Route path='profile' element={<Profile />} />
+              <Route path='password' element={<Password />} />
+              <Route path='history' element={<OrderHistory />}>
+                <Route path=':orderId' element={<OrderDetail />} />
+              </Route>
+              <Route path='favorate' element={<FavorateProduct />} />
+              <Route path='my-cmt' element={<MyCmt />} />
             </Route>
-            <Route path='favorate' element={<FavorateProduct />} />
-            <Route path='my-cmt' element={<MyCmt />} />
+            <Route path='cart' element={<Cart />} />
           </Route>
-          <Route path='cart' element={<Cart />} />
-        </Route>
-      </Routes>
+        </Routes>
+      </div>
       <Footer />
     </div>
   )

@@ -13,8 +13,8 @@ model cmt {
   content String    @db.Text
   created DateTime? @default(now()) @db.Timestamp(0)
   updated DateTime? @db.Timestamp(0)
-  user_id Int
-  item_id Int
+  user_id String    @db.VarChar(50)
+  item_id String    @db.VarChar(50)
   user    user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_1")
   item    item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_2")
 
@@ -23,13 +23,13 @@ model cmt {
 }
 
 model item {
-  item_id             Int           @id @default(autoincrement())
+  item_id             String        @id @db.VarChar(50)
   item_name           String        @db.VarChar(500)
   image               String        @db.VarChar(300)
   price               Float         @db.Float
   priceBeforeDiscount Float?        @db.Float
   quantity            Int
-  sold                Int           @default(0)
+  sold                Int?          @default(0)
   description         String?       @db.Text
   category            item_category
   created             DateTime?     @default(now()) @db.Timestamp(0)
@@ -39,14 +39,14 @@ model item {
 }
 
 model order {
-  order_id    Int           @id @default(autoincrement())
-  status      order_status? @default(dbgenerated("(_latin1\\'waiting-confirm\\')"))
+  order_id    String        @id @db.VarChar(50)
+  status      order_status? @default(waiting_confirm)
   total       Float         @db.Float
-  discount    Float
+  discount    Float?        @default(0)
   note        String?       @db.VarChar(500)
   created     DateTime?     @default(now()) @db.Timestamp(0)
   updated     DateTime?     @db.Timestamp(0)
-  user_id     Int
+  user_id     String        @db.VarChar(50)
   itemInOrder itemInOrder[]
   user        user          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
 
@@ -54,13 +54,13 @@ model order {
 }
 
 model user {
-  user_id  Int        @id @default(autoincrement())
+  user_id  String     @id @db.VarChar(50)
   name     String     @db.VarChar(50)
   email    String     @db.VarChar(100)
   password String?    @db.VarChar(100)
   avatar   String?    @db.VarChar(500)
   point    Int?       @default(0)
-  role     user_role? @default(dbgenerated("(_latin1\\'user\\')"))
+  role     user_role? @default(user)
   isActive Boolean?   @default(true)
   created  DateTime?  @default(now()) @db.Timestamp(0)
   updated  DateTime?  @db.Timestamp(0)
@@ -70,10 +70,11 @@ model user {
 }
 
 model itemInOrder {
-  order_id Int
-  item_id  Int
-  order    order @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_1")
-  item     item  @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_2")
+  order_id String @db.VarChar(50)
+  item_id  String @db.VarChar(50)
+  quantity Int
+  order    order  @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_1")
+  item     item   @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "itemInOrder_ibfk_2")
 
   @@id([order_id, item_id])
   @@index([item_id], map: "item_id")
@@ -81,7 +82,7 @@ model itemInOrder {
 
 model session {
   session_id    Int       @id @default(autoincrement())
-  user_id       Int
+  user_id       String    @db.VarChar(50)
   access_token  String    @db.VarChar(500)
   refresh_token String    @db.VarChar(500)
   created       DateTime? @default(now()) @db.Timestamp(0)
@@ -104,12 +105,12 @@ enum order_status {
 
 enum item_category {
   entertainment
-  work
-  learn
-  game_steam        @map("game-steam")
-  ea_games          @map("ea-games")
-  window_office     @map("window-office")
-  google_drive      @map("google-drive")
-  steam_wallet      @map("steam-wallet")
-  google_play_itune @map("google-play-itune")
+  work              @map(" 'work")
+  learn             @map(" 'learn")
+  game_steam        @map(" 'game-steam")
+  ea_games          @map(" 'ea-games")
+  window_office     @map(" 'window-office")
+  google_drive      @map(" 'google-drive")
+  steam_wallet      @map(" 'steam-wallet")
+  google_play_itune @map(" 'google-play-itune")
 }

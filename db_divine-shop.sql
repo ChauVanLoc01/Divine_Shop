@@ -12,65 +12,64 @@ CREATE TABLE `cmt` (
   `cmt_id` int NOT NULL AUTO_INCREMENT,
   `content` text NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated` timestamp NULL DEFAULT NULL,
-  `user_id` int NOT NULL,
-  `item_id` int NOT NULL,
+  `updated` timestamp DEFAULT NULL,
+  `user_id` varchar(50) NOT NULL,
+  `item_id` varchar(50) NOT NULL,
   PRIMARY KEY (`cmt_id`),
   KEY `user_id` (`user_id`),
   KEY `item_id` (`item_id`),
   CONSTRAINT `cmt_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   CONSTRAINT `cmt_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 DROP TABLE IF EXISTS `item`;
 CREATE TABLE `item` (
-  `item_id` int NOT NULL AUTO_INCREMENT,
+  `item_id` varchar(50) NOT NULL primary key,
   `item_name` varchar(500) NOT NULL,
-  `image` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `image` varchar(300) NOT NULL,
   `price` float NOT NULL,
-  `priceBeforeDiscount` float NOT NULL,
+  `priceBeforeDiscount` float NULL,
   `quantity` int NOT NULL,
-  `sold` int NOT NULL,
-  `description` text,
-  `category` enum('''entertainment'', ''work'', ''learn'', ''game-steam'', ''ea-games'', ''window-office'', ''google-drive'', ''steam-wallet'', ''google-play-itune''') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sold` int default 0,
+  `description` text null,
+  `category` enum('''entertainment'', ''work'', ''learn'', ''game-steam'', ''ea-games'', ''window-office'', ''google-drive'', ''steam-wallet'', ''google-play-itune''') NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`item_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `updated` timestamp NULL DEFAULT NULL
+);
 
 
 DROP TABLE IF EXISTS `itemInOrder`;
 CREATE TABLE `itemInOrder` (
-  `order_id` int NOT NULL,
-  `item_id` int NOT NULL,
+  `order_id` varchar(50) NOT NULL,
+  `item_id` varchar(50) NOT NULL,
+  `quantity` int not null,
   PRIMARY KEY (`order_id`,`item_id`),
   KEY `item_id` (`item_id`),
   CONSTRAINT `iteminorder_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`),
   CONSTRAINT `iteminorder_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE `order` (
-  `order_id` int NOT NULL AUTO_INCREMENT,
-  `status` enum('waiting-confirm','success','cancel') DEFAULT (_latin1'waiting-confirm'),
+  `order_id` varchar(50) not null primary key,
+  `status` enum('waiting-confirm','success','cancel') default 'waiting-confirm',
   `total` float NOT NULL,
-  `discount` double NOT NULL,
+  `discount` double default 0,
   `note` varchar(500) DEFAULT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL DEFAULT NULL,
-  `user_id` int NOT NULL,
-  PRIMARY KEY (`order_id`),
+  `user_id` varchar(50) NOT NULL,
   KEY `user_id` (`user_id`),
   CONSTRAINT `order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
   `session_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
+  `user_id` varchar(50) NOT NULL,
   `access_token` varchar(500) NOT NULL,
   `refresh_token` varchar(500) NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -78,23 +77,20 @@ CREATE TABLE `session` (
   PRIMARY KEY (`session_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `session_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
-
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `user_id` varchar(50) not null primary key,
+  `name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) DEFAULT NULL,
   `avatar` varchar(500) DEFAULT NULL,
-  `point` int DEFAULT NULL,
-  `role` enum('admin','user') DEFAULT (_latin1'user'),
+  `point` int DEFAULT 0,
+  `role` enum('admin','user') DEFAULT 'user',
   `isActive` tinyint(1) DEFAULT '1',
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `updated` timestamp NULL DEFAULT NULL
+);
 
 
 -- 2023-08-08 16:05:16

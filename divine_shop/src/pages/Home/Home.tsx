@@ -5,7 +5,7 @@ import Banner from './Banner'
 function Home() {
   return (
     <div className='bg-[#F3F4F6] lg:py-4 space-y-8'>
-      <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
+      <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
         <div className='md:space-y-4 space-y-2'>
           <div className='flex lg:flex-row flex-col justify-between lg:space-y-0 md:space-y-4 space-y-2'>
             <div className='lg:w-[19%] lg:block hidden h-full rounded-md overflow-hidden'>
@@ -68,7 +68,7 @@ function Home() {
         title='Từ khóa nổi bật'
         hasButton={false}
         content={
-          <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2'>
+          <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2'>
             <button className='bg-[#3D5A80] lg:py-5 py-3 rounded-lg text-white font-semibold'>Làm việc</button>
             <button className='bg-[#98C1D9] lg:py-5 py-3 rounded-lg text-white font-semibold'>Giải trí</button>
             <button className='bg-[#EE6C4D] lg:py-5 py-3 rounded-lg text-white font-semibold'>Học tập</button>
@@ -108,7 +108,7 @@ function Home() {
         title='Giá phù hợp'
         hasButton={false}
         content={
-          <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2 font-semibold text-gray-600'>
+          <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2 font-semibold text-gray-600'>
             <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>20.000đ</button>
             <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>50.000đ</button>
             <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>100.000đ</button>

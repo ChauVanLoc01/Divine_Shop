@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-
+const { PrismaClient, Prisma } = require("@prisma/client");
+const { v4: uuidv4 } = require("uuid");
 const prisma = new PrismaClient();
 
 const entertamain = [
@@ -1096,6 +1096,7 @@ const result = [
     price: Number(e.price.replaceAll("đ", "").replaceAll(".", "")),
     quantity,
     sold: Math.floor(Math.random() * quantity),
+    item_id: uuidv4(),
   };
 });
 async function test() {

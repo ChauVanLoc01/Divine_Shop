@@ -13,6 +13,7 @@ import { Queue } from 'bull';
 import { omit } from 'lodash';
 import { SuccessResponse } from '../types/Response.type';
 import { MyException } from '../commons/filters/my.filter';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -105,6 +106,7 @@ export class UserService {
     if (!userDB) {
       const { role, user_id } = await this.prisma.user.create({
         data: {
+          user_id: uuidv4(),
           email,
           name,
           avatar,
@@ -148,6 +150,7 @@ export class UserService {
     const accessToken = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
+          user_id: uuidv4(),
           email,
           password: await this.hashPassword(password),
           name,
@@ -262,7 +265,7 @@ export class UserService {
     }
     const user = await this.prisma.user.findFirst({
       where: {
-        user_id: Number(user_id),
+        user_id,
       },
     });
     if (!user) {
@@ -294,7 +297,7 @@ export class UserService {
   }
 
   async logout(
-    user_id: number,
+    user_id: string,
     access_token: string,
     refresh_token: string,
   ): Promise<SuccessResponse<{}>> {
@@ -312,7 +315,7 @@ export class UserService {
   }
 
   async renewToken(
-    user_id: number,
+    user_id: string,
     access_token: string,
     refresh_token: string,
     response: ResponseExpress,
@@ -325,7 +328,7 @@ export class UserService {
     }
     const session = await this.prisma.session.findFirst({
       where: {
-        user_id,
+        user_id: uuidv4(),
         refresh_token,
         access_token,
       },
@@ -369,7 +372,7 @@ export class UserService {
   }
 
   async profile(
-    slug: number,
+    slug: string,
   ): Promise<SuccessResponse<Omit<user, 'password'>>> {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -389,7 +392,7 @@ export class UserService {
   }
 
   async changePassword(
-    user_id: number,
+    user_id: string,
     current_password: string,
     new_password: string,
   ): Promise<SuccessResponse<{}>> {

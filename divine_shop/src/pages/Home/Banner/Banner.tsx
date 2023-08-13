@@ -21,7 +21,7 @@ function Banner({ title, img, desc, content, hasButton }: BannnerType) {
           'lg:pt-28 md:pt-20 pt-14 pb-6 bg-cover': img
         })}`}
       >
-        <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
+        <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
           <div className='flex justify-between'>
             {title_node}
             <div className='w-1/3 text-right'>

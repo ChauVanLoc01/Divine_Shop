@@ -116,6 +116,6 @@ export class UserController {
 
   @Get('profiles/:slug')
   profile(@Param('slug') slug: string) {
-    return this.userService.profile(Number(slug));
+    return this.userService.profile(slug);
   }
 }

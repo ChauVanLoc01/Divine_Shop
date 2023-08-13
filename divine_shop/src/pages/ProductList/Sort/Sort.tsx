@@ -2,7 +2,7 @@ import ListBox from './ListBox'
 
 function Sort() {
   return (
-    <div className='xl:max-w-7xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm space-y-4'>
+    <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm space-y-4'>
       <div className='font-semibold text-2xl'>Tìm kiếm sản phẩm</div>
       <form className='flex md:gap-x-4 gap-3 flex-wrap'>
         <div className='lg:basis-1/5 md:basis-1/4 w-[47%]'>
