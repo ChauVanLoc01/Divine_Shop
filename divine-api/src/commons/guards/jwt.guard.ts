@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { Request } from 'express';
 import { ADMIN_KEY } from '../Metadata/role.metadata';
 import { UserWithLocal } from '../../types/ReqWithLocal.type';
 import { IS_PUBLIC_KEY } from '../Metadata/public.metadata';
+import { MyException } from '../filters/my.filter';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -37,19 +39,27 @@ export class JwtGuard implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new MyException({
+        status_code: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized',
+      });
     }
     try {
       const payload: UserWithLocal = await this.jwtService.verifyAsync(token, {
         secret: process.env.SECRET_ACCESS_TOKEN,
       });
       if (isAdmin && payload.role !== 'admin') {
-        console.log('a');
-        throw new UnauthorizedException('Permission denied');
+        throw new MyException({
+          status_code: HttpStatus.UNAUTHORIZED,
+          message: 'Permission denied',
+        });
       }
       request['user'] = payload;
     } catch (e) {
-      throw new UnauthorizedException(e.message);
+      throw new MyException({
+        status_code: HttpStatus.UNAUTHORIZED,
+        message: e.message,
+      });
     }
     return true;
   }

@@ -39,7 +39,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (typeof result === 'string') {
       throw new MyException({
         status_code: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
+        message: result,
       });
     }
     const { user_id, role } = result;

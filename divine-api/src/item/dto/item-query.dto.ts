@@ -6,11 +6,17 @@ import {
   IsNumberString,
   IsOptional,
   IsPositive,
+  IsString,
 } from 'class-validator';
 import { GreaterThan } from '../../commons/decorators/greater-than.decorator';
 import { Transform } from 'class-transformer';
 
 export class ItemQueryDTO {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  item_name?: string;
+
   @ApiPropertyOptional({
     enum: [
       'entertainment',
@@ -65,24 +71,37 @@ export class ItemQueryDTO {
   @IsNumber()
   price_max: number;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    enum: ['asc', 'desc'],
+  })
   @IsOptional()
   @IsEnum(['asc', 'desc'], {
     message: 'Order by created must be enum type like: asc | desc',
   })
   order_by_created: 'asc' | 'desc';
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    enum: ['asc', 'desc'],
+  })
   @IsOptional()
   @IsEnum(['asc', 'desc'], {
     message: 'Order by item name must be enum type like: asc | desc',
   })
   order_by_item_name: 'asc' | 'desc';
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    enum: ['asc', 'desc'],
+  })
   @IsOptional()
   @IsEnum(['asc', 'desc'])
   order_by_price: 'asc' | 'desc';
+
+  @ApiPropertyOptional({
+    enum: ['asc', 'desc'],
+  })
+  @IsOptional()
+  @IsEnum(['asc', 'desc'])
+  order_by_sold: 'asc' | 'desc';
 
   @ApiPropertyOptional({
     default: 10,

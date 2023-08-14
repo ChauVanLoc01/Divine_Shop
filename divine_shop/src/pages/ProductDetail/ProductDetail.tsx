@@ -1,22 +1,27 @@
+import { useGetItemQuery } from 'src/utils/apis/items.api'
 import CmtPaging from './CmtPaging'
 import CreateCmt from './CreateCmt'
 import Information from './Information/Information'
+import { useParams } from 'react-router-dom'
+import { calculate_discount, format_currency } from 'src/utils/utils'
 
 function ProductDetail() {
+  const { productId } = useParams()
+  const { data, isFetching } = useGetItemQuery(productId?.split(',')[1] as string)
+  if (!data) {
+    return <div>alo</div>
+  }
+  const { category, image, item_name, price, priceBeforeDiscount, quantity } = data?.data
   return (
     <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm md:py-5 py-2 border-t-[1px] border-gray-200 space-y-3 md:space-y-5'>
       <div className='flex md:flex-row flex-col md:gap-x-6 gap-y-3 bg-white'>
         <div className='basis-2/5'>
-          <img
-            className='bg-cover w-full rounded-md'
-            src='https://cdn.divineshop.vn/image/catalog/Anh-SP-New/Tien/Anh%20SP/7.7/t%C3%A0i%20kho%E1%BA%A3n%20BF4.png?hash=1626925143'
-            alt=''
-          />
+          <img className='bg-cover w-full rounded-md' src={image} alt='Product Image' />
         </div>
         <div className='basis-3/5 md:space-y-6 space-y-5'>
           <div className='space-y-2'>
             <div>Sản phẩm</div>
-            <div className='text-3xl font-semibold'>Tài khoản Battlefield 4 (EA)</div>
+            <div className='text-2xl md:text-3xl font-semibold'>{item_name}</div>
             <div className='flex space-x-2'>
               <span>
                 <svg
@@ -35,7 +40,7 @@ function ProductDetail() {
                 </svg>
               </span>
               <span>
-                Tình trạng: <span>Còn hàng</span>
+                Tình trạng: <span>{quantity > 0 ? 'Còn hàng' : 'Hết hàng'}</span>
               </span>
             </div>
             <div className='flex space-x-2'>
@@ -57,11 +62,12 @@ function ProductDetail() {
                 </svg>
               </span>
               <span>
-                Thể loại: <span>bf4, tài khoản, accgame</span>
+                Thể loại: <span>{category}</span>
               </span>
             </div>
             <div className='flex space-x-3'>
-              <span>79.000đ</span>
+              <span>{format_currency(price)}</span>
+              <span className='line-through text-gray-400'>{format_currency(priceBeforeDiscount)}</span>
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -78,14 +84,13 @@ function ProductDetail() {
                   />
                 </svg>
               </span>
-            </div>
-            <div className='flex space-x-2'>
-              <span className='line-through text-gray-400'>500.000đ</span>
-              <span className='px-1 text-white bg-red-500 rounded-xl'>-84%</span>
+              <span className='px-1 text-white bg-red-500 rounded-md'>
+                -{calculate_discount(price, priceBeforeDiscount)}%
+              </span>
             </div>
           </div>
           <div className='space-x-4 flex'>
-            <button className='text-white space-x-2 hover:bg-[#2579F2]/90 transition-all duration-100 ease-linear bg-[#2579F2] px-5 py-2 rounded-md flex ring-2 ring-[#2579F2]/90 hover:ring-[#2579F2]'>
+            <button className='text-white space-x-1 lg:space-x-2 hover:bg-[#2579F2]/90 transition-all duration-100 ease-linear bg-[#2579F2] px-2 md:px-3 py-2 lg:px-5 lg:py-2 rounded-md flex ring-2 ring-[#2579F2]/90 hover:ring-[#2579F2] items-center'>
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -93,7 +98,7 @@ function ProductDetail() {
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='w-6 h-6'
+                  className='lg:w-6 w-5 lg:h-6 h-5'
                 >
                   <path
                     strokeLinecap='round'
@@ -104,7 +109,7 @@ function ProductDetail() {
               </span>
               <span>Mua ngay</span>
             </button>
-            <button className='text-[#2579F2] space-x-2 rounded-md px-5 py-2 flex ring-2 ring-gray-300 border-gray-300 hover:ring-2 hover:ring-[#2579F2]'>
+            <button className='text-[#2579F2] space-x-2 rounded-md px-2 md:px-3 py-2 lg:px-5 lg:py-2 flex ring-2 ring-gray-300 border-gray-300 hover:ring-2 hover:ring-[#2579F2] items-center'>
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -112,7 +117,7 @@ function ProductDetail() {
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='w-6 h-6'
+                  className='lg:w-6 w-5 lg:h-6 h-5'
                 >
                   <path
                     strokeLinecap='round'

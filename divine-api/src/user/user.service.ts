@@ -39,7 +39,7 @@ export class UserService {
       },
     });
     if (!user) {
-      return 'Email incorrect';
+      return 'Email not found';
     }
     if (!(await this.comparePassword(password, user.password))) {
       return 'Password incorrect';
@@ -50,22 +50,22 @@ export class UserService {
     return user;
   }
 
-  createAccessToken(user: UserWithLocal): string {
+  async createAccessToken(user: UserWithLocal): Promise<string> {
     return (
       'Beaer ' +
-      this.jwtService.sign(user, {
-        expiresIn: process.env.TTL_ACCESS_TOKEN,
-      })
+      (await this.jwtService.signAsync(user, {
+        expiresIn: 1000 * 60 * 60 * 8,
+      }))
     );
   }
 
-  createRefreshToken(user: UserWithLocal): string {
+  async createRefreshToken(user: UserWithLocal): Promise<string> {
     return (
       'Beaer ' +
-      this.jwtService.sign(user, {
-        expiresIn: process.env.TTL_REFRESH_TOKEN,
+      (await this.jwtService.signAsync(user, {
+        expiresIn: 1000 * 60 * 60 * 24 * 7,
         secret: process.env.SECRET_REFRESH_TOKEN,
-      })
+      }))
     );
   }
 
@@ -73,8 +73,8 @@ export class UserService {
     user: UserWithLocal,
     response: ResponseExpress,
   ): Promise<SuccessResponse<{ accessToken: string }>> {
-    const access_token = this.createAccessToken(user);
-    const refresh_token = this.createRefreshToken(user);
+    const access_token = await this.createAccessToken(user);
+    const refresh_token = await this.createRefreshToken(user);
     await this.prisma.session.create({
       data: {
         user_id: user.user_id,
@@ -115,14 +115,14 @@ export class UserService {
       return {
         message: 'Well come to My Store',
         data: {
-          accessToken: this.createAccessToken({ role, user_id }),
+          accessToken: await this.createAccessToken({ role, user_id }),
         },
       };
     }
     return {
       message: 'Well come to My Store',
       data: {
-        accessToken: this.createAccessToken({
+        accessToken: await this.createAccessToken({
           role: userDB.role,
           user_id: userDB.user_id,
         }),
@@ -160,8 +160,8 @@ export class UserService {
         role: user.role,
         user_id: user.user_id,
       } as UserWithLocal;
-      const access_token = this.createAccessToken(payload);
-      const refresh_token = this.createRefreshToken(payload);
+      const access_token = await this.createAccessToken(payload);
+      const refresh_token = await this.createRefreshToken(payload);
       await tx.session.create({
         data: {
           user_id: user.user_id,
@@ -213,7 +213,7 @@ export class UserService {
     }
     try {
       const code = user.user_id + '%' + Math.random().toString(36).slice(2, 7);
-      const url = `http://localhost:3000/${code}`;
+      const url = `http://${process.env.HOST_STORE}:3000/${code}`;
       await this.emailQueue.add(
         'forgot-password',
         {
@@ -315,11 +315,19 @@ export class UserService {
   }
 
   async renewToken(
-    user_id: string,
     access_token: string,
     refresh_token: string,
     response: ResponseExpress,
   ): Promise<SuccessResponse<{ accessToken: string }>> {
+    const isAccessTokenExist = await this.jwtService.verify(access_token, {
+      secret: process.env.SECRET_ACCESS_TOKEN,
+    });
+    if (isAccessTokenExist) {
+      throw new MyException({
+        status_code: HttpStatus.BAD_REQUEST,
+        message: 'Access token has not expired',
+      });
+    }
     if (!refresh_token) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
@@ -328,7 +336,6 @@ export class UserService {
     }
     const session = await this.prisma.session.findFirst({
       where: {
-        user_id: uuidv4(),
         refresh_token,
         access_token,
       },
@@ -348,8 +355,8 @@ export class UserService {
         message: 'Refresh token is expired',
       });
     }
-    const new_access_token = this.createAccessToken(value);
-    const new_refresh_token = this.createRefreshToken(value);
+    const new_access_token = await this.createAccessToken(value);
+    const new_refresh_token = await this.createRefreshToken(value);
     await this.prisma.session.update({
       where: {
         session_id: session.session_id,
@@ -371,7 +378,11 @@ export class UserService {
     };
   }
 
-  async profile(
+  async profiles() {
+    const users = await this.prisma.user.findMany();
+  }
+
+  async profilesDetail(
     slug: string,
   ): Promise<SuccessResponse<Omit<user, 'password'>>> {
     const user = await this.prisma.user.findUnique({
@@ -391,11 +402,9 @@ export class UserService {
     };
   }
 
-  async changePassword(
+  async profile(
     user_id: string,
-    current_password: string,
-    new_password: string,
-  ): Promise<SuccessResponse<{}>> {
+  ): Promise<SuccessResponse<Omit<user, 'password'>>> {
     const user = await this.prisma.user.findUnique({
       where: {
         user_id,
@@ -407,7 +416,35 @@ export class UserService {
         message: 'User not found',
       });
     }
-    if (!(await this.comparePassword(current_password, new_password))) {
+    return {
+      message: 'Get profile successfully',
+      data: omit(user, ['password']),
+    };
+  }
+
+  async changePassword(
+    user_id: string,
+    current_password: string,
+    new_password: string,
+  ): Promise<SuccessResponse<{}>> {
+    if (current_password === new_password) {
+      throw new MyException({
+        status_code: HttpStatus.BAD_REQUEST,
+        message: 'Both password is must different',
+      });
+    }
+    const user = await this.prisma.user.findUnique({
+      where: {
+        user_id,
+      },
+    });
+    if (!user) {
+      throw new MyException({
+        status_code: HttpStatus.NOT_FOUND,
+        message: 'User does not found',
+      });
+    }
+    if (!(await this.comparePassword(current_password, user.password))) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
         message: 'Current password is wrong',

@@ -14,7 +14,7 @@ import { MyException } from '../commons/filters/my.filter';
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  async getDetail(item_id: number): Promise<SuccessResponse<item>> {
+  async getDetail(item_id: string): Promise<SuccessResponse<item>> {
     const item = await this.prisma.item.findUnique({
       where: {
         item_id,
@@ -33,6 +33,7 @@ export class ItemService {
   }
 
   async getListItem(
+    item_name?: string,
     category?:
       | 'entertainment'
       | 'work'
@@ -48,21 +49,41 @@ export class ItemService {
     order_by_created?: 'asc' | 'desc',
     order_by_item_name?: 'asc' | 'desc',
     order_by_price?: 'asc' | 'desc',
+    order_by_sold?: 'asc' | 'desc',
     limit?: number,
     page?: number,
   ): Promise<
     SuccessResponse<{
-      items: Pick<
-        item,
-        'item_id' | 'item_name' | 'price' | 'priceBeforeDiscount'
-      >[];
+      items: item[];
       [key: string]: any;
     }>
   > {
+    const lengthOrder = {
+      ...omitBy(
+        {
+          order_by_created,
+          order_by_item_name,
+          order_by_price,
+          order_by_sold,
+        },
+        isUndefined,
+      ),
+    };
+    if (Object.keys(lengthOrder).length > 1) {
+      throw new MyException({
+        status_code: HttpStatus.BAD_REQUEST,
+        message: 'Maximum 1 order property',
+      });
+    }
     const take = limit ? limit : Number(process.env.LIMIT_STORE);
     const [tmp, items] = await Promise.all([
       this.prisma.item.findMany({
         where: {
+          item_name: item_name
+            ? {
+                contains: item_name,
+              }
+            : undefined,
           category: category ? category : undefined,
           price:
             !price_max && !price_min
@@ -83,6 +104,11 @@ export class ItemService {
       }),
       this.prisma.item.findMany({
         where: {
+          item_name: item_name
+            ? {
+                contains: item_name,
+              }
+            : undefined,
           category: category ? category : undefined,
           price:
             !price_max && !price_min
@@ -101,24 +127,13 @@ export class ItemService {
                 },
         },
         orderBy: {
-          created: order_by_created
-            ? order_by_created
-            : !order_by_item_name && !order_by_price
-            ? 'desc'
-            : undefined,
+          created: order_by_created ? order_by_created : undefined,
           item_name: order_by_item_name ? order_by_item_name : undefined,
           price: order_by_price ? order_by_price : undefined,
+          sold: order_by_sold ? order_by_sold : undefined,
         },
         take,
-        skip: page || page > 1 ? (page - 1) * limit : 0,
-        select: {
-          item_id: true,
-          item_name: true,
-          image: true,
-          price: true,
-          priceBeforeDiscount: true,
-          category: true,
-        },
+        skip: !page || page === 1 ? 0 : (page - 1) * take,
       }),
     ]);
     return {
@@ -133,8 +148,8 @@ export class ItemService {
             order_by_created,
             order_by_item_name,
             order_by_price,
-            limit,
-            page,
+            limit: take,
+            page: page ? page : 1,
             page_size: Math.ceil(tmp.length / take),
           },
           isUndefined,
@@ -143,7 +158,7 @@ export class ItemService {
     };
   }
 
-  async delete(item_id: number) {
+  async delete(item_id: string) {
     const item = await this.prisma.item.findUnique({
       where: {
         item_id,

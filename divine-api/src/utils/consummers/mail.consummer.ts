@@ -37,7 +37,7 @@ export class MailConsummer {
     await Promise.all([
       // @ts-ignore
       this.cacheManager.set(email, code, {
-        ttl: 20,
+        ttl: 30,
       }),
       // @ts-ignore
       this.cacheManager.set(user_id, code, { ttl: 60 }),

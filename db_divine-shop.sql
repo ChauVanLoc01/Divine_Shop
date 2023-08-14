@@ -1,12 +1,3 @@
--- Adminer 4.8.1 MySQL 8.1.0 dump
-
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
-
-SET NAMES utf8mb4;
-
 DROP TABLE IF EXISTS `cmt`;
 CREATE TABLE `cmt` (
   `cmt_id` int NOT NULL AUTO_INCREMENT,
@@ -33,7 +24,7 @@ CREATE TABLE `item` (
   `quantity` int NOT NULL,
   `sold` int default 0,
   `description` text null,
-  `category` enum('''entertainment'', ''work'', ''learn'', ''game-steam'', ''ea-games'', ''window-office'', ''google-drive'', ''steam-wallet'', ''google-play-itune''') NOT NULL,
+  `category` enum('entertainment', 'work', 'learn', 'game_steam', 'ea_games', 'window_office', 'google_drive', 'steam_wallet', 'google_play_itune') NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL DEFAULT NULL
 );
@@ -54,7 +45,7 @@ CREATE TABLE `itemInOrder` (
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE `order` (
   `order_id` varchar(50) not null primary key,
-  `status` enum('waiting-confirm','success','cancel') default 'waiting-confirm',
+  `status` enum('waiting_confirm','success','cancel') default 'waiting_confirm',
   `total` float NOT NULL,
   `discount` double default 0,
   `note` varchar(500) DEFAULT NULL,
@@ -79,6 +70,7 @@ CREATE TABLE `session` (
   CONSTRAINT `session_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 );
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` varchar(50) not null primary key,
   `name` varchar(50) NOT NULL,
@@ -91,6 +83,3 @@ CREATE TABLE `user` (
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NULL DEFAULT NULL
 );
-
-
--- 2023-08-08 16:05:16

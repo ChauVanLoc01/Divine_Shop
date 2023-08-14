@@ -26,6 +26,7 @@ import { MyException } from '../commons/filters/my.filter';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 @ApiTags('Items')
 @Controller('items')
@@ -37,23 +38,27 @@ export class ItemController {
   listItem(
     @Query()
     {
+      item_name,
       category,
       price_max,
       price_min,
       order_by_created,
       order_by_item_name,
       order_by_price,
+      order_by_sold,
       limit,
       page,
     }: ItemQueryDTO,
   ) {
     return this.itemService.getListItem(
+      item_name,
       category,
       price_max,
       price_min,
       order_by_created,
       order_by_item_name,
       order_by_price,
+      order_by_sold,
       limit,
       page,
     );
@@ -62,7 +67,7 @@ export class ItemController {
   @Public()
   @Get(':slug')
   item(@Param('slug') slug: string) {
-    return this.itemService.getDetail(Number(slug));
+    return this.itemService.getDetail(slug);
   }
 
   @Admin()
@@ -106,7 +111,8 @@ export class ItemController {
   ) {
     return this.itemService.createItem({
       ...omit(body, ['image']),
-      image: `${process.env.HOST_STORE}${file.filename}`,
+      image: `${process.env.HOST_STORE}:${process.env.STORE_PORT}/${file.filename}`,
+      item_id: uuidv4(),
     });
   }
 
@@ -117,6 +123,6 @@ export class ItemController {
   @Admin()
   @Delete(':slug')
   delete(@Param('slug') slug: string) {
-    return this.itemService.delete(Number(slug));
+    return this.itemService.delete(slug);
   }
 }

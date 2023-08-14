@@ -17,7 +17,7 @@ import { OrderModule } from './order/order.module';
   imports: [
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: process.env.REDIS_HOST_STORE,
         port: 6379,
       },
     }),
@@ -26,7 +26,7 @@ import { OrderModule } from './order/order.module';
       store: async () =>
         await redisStore({
           socket: {
-            host: 'localhost',
+            host: process.env.REDIS_HOST_STORE,
             port: 6379,
           },
         }),

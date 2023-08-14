@@ -24,8 +24,8 @@ export class CatchEveryThing implements ExceptionFilter {
       status_code: HttpStatus.INTERNAL_SERVER_ERROR,
       message:
         exception instanceof Prisma.PrismaClientValidationError
-          ? 'Error when working with db'
-          : 'Error BE',
+          ? exception.stack
+          : (exception as HttpException).message,
     } as FailResponse);
   }
 }

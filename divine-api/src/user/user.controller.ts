@@ -18,7 +18,7 @@ import { ReqWithGoogle } from '../types/ReqWithGoogle.type';
 import { GoogleGuard } from '../commons/guards/google.guard';
 import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { Public } from '../commons/Metadata/public.metadata';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Admin } from '../commons/Metadata/role.metadata';
@@ -101,9 +101,8 @@ export class UserController {
   @HttpCode(201)
   @Public()
   @Get('reset-token')
-  renewToken(@Req() req: ReqWithLocal, @Res() res: Response) {
+  renewToken(@Req() req: Request, @Res() res: Response) {
     return this.userService.renewToken(
-      req.user.user_id,
       req.headers.authorization,
       req.cookies['refresh_token'],
       res,
@@ -112,10 +111,18 @@ export class UserController {
 
   @Admin()
   @Get('profiles')
-  profiles() {}
+  profiles() {
+    return this.userService.profiles();
+  }
 
+  @Admin()
   @Get('profiles/:slug')
-  profile(@Param('slug') slug: string) {
-    return this.userService.profile(slug);
+  profilesDetail(@Param('slug') slug: string) {
+    return this.userService.profilesDetail(slug);
+  }
+
+  @Get('profile')
+  profile(@Req() req: ReqWithLocal) {
+    return this.userService.profile(req.user.user_id);
   }
 }

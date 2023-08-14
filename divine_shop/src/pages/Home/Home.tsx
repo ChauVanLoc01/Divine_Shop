@@ -1,8 +1,20 @@
 import Paging from 'src/Components/Paging'
 import Category from './Category'
 import Banner from './Banner'
+import { useGetItemListQuery } from 'src/utils/apis/items.api'
+import { ItemCategoryEnum, OrderEnum } from 'src/Types/items.type'
 
 function Home() {
+  const { data: data_game_stream, isFetching: isFetchingGameStream } = useGetItemListQuery({
+    category: ItemCategoryEnum.game_steam
+  })
+  const { data: data_new, isFetching: isFetchingNew } = useGetItemListQuery({
+    order_by_created: OrderEnum.desc
+  })
+  const { data: data_best_sold, isFetching: isFetchingBestSold } = useGetItemListQuery({
+    order_by_sold: OrderEnum.desc
+  })
+
   return (
     <div className='bg-[#F3F4F6] lg:py-4 space-y-8'>
       <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
@@ -59,10 +71,10 @@ function Home() {
         </div>
       </div>
       <Banner
-        title='Sản phẩm nổi bật'
+        title='Sản phẩm mới'
         desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
         hasButton={true}
-        content={<Paging products={Array(8).fill(0)} />}
+        content={data_new && !isFetchingNew ? <Paging products={data_new.data.items} /> : <div>alo</div>}
       />
       <Banner
         title='Từ khóa nổi bật'
@@ -101,7 +113,13 @@ function Home() {
           </div>
         }
         img='https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png'
-        content={<Paging products={Array(12).fill(0)} bgColor='bg-[#000D21]' />}
+        content={
+          data_best_sold && !isFetchingBestSold ? (
+            <Paging products={data_best_sold.data.items} bgColor='bg-[#000D21]' />
+          ) : (
+            <div>alo</div>
+          )
+        }
         hasButton={true}
       />
       <Banner
@@ -122,7 +140,9 @@ function Home() {
         title='Game trên Steam'
         hasButton={true}
         desc='Những trò chơi được đánh giá tốt, nội dung hấp dẫn thu hút đang chờ bạn'
-        content={<Paging products={Array(8).fill(0)} />}
+        content={
+          data_game_stream && !isFetchingGameStream ? <Paging products={data_game_stream.data.items} /> : <div>alo</div>
+        }
       />
     </div>
   )

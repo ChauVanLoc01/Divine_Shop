@@ -1,42 +1,27 @@
 version: '3.8'
 services:
-  # api:
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: .
-  #   volumes:
-  #     - .:/app
-  #     - node_modules:/app/node_modules
-  #   ports:
-  #     - '${STORE_PORT}:${STORE_PORT}'
-  #   environment:
-  #     - DATABASE_URL=${DATABASE_URL}
-  #     - STORE_PORT=${STORE_PORT}
-  #     - TTL_ACCESS_TOKEN=${TTL_ACCESS_TOKEN}
-  #     - TTL_REFRESH_TOKEN=${TTL_REFRESH_TOKEN}
-  #     - SECRET_ACCESS_TOKEN=${SECRET_ACCESS_TOKEN}
-  #     - SECRET_REFRESH_TOKEN=${SECRET_REFRESH_TOKEN}
-  #     - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-  #     - GOOGLE_SECRET=${GOOGLE_SECRET}
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - db
-  db:
-    image: mysql
-    restart: unless-stopped
-    volumes:
-      - ./public/db:/var/lib/mysql
-      - ./divine_db.sql:/docker-entrypoint-initdb.d/init.sql
+  api:
+    image: chauvanloc/divine-be
     ports:
-      - 3307:3306
+      - 1234:1234
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=divine_db
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      - HOST_STORE=18.141.160.212
+      - REDIS_HOST_STORE=redis
+      - DATABASE_URL=mysql://chauvanloc:taizzz.bongdem220401@my-store-db.cy0uyyfcljw9.ap-southeast-1.rds.amazonaws.com:3306/divine_store?schema=public
+      - STORE_PORT=1234
+      - SECRET_ACCESS_TOKEN="SECRET_ACCESS_TOKEN"
+      - SECRET_REFRESH_TOKEN="SECRET_REFRESH_TOKEN"
+      - GOOGLE_CLIENT_ID="408781403808-1hma7js2tiihc45cajh20vor36ooec34.apps.googleusercontent.com"
+      - GOOGLE_SECRET="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"
+      - LIMIT_STORE=12
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_USER=locchau.220401@gmail.com
+      - MAIL_PASSWORD=kcsaltzzvdupltxh
+      - MAIL_FROM=locchau.220401@gmail.com
+      - MAIL_TRANSPORT=smtp://locchau.220401@gmail.com:kcsaltzzvdupltxh@smtp.gmail.com
+    restart: unless-stopped
+    depends_on:
+      - redis
   redis:
     image: redis
     restart: always

@@ -91,25 +91,25 @@ model user {
   session  session[]
 }
 
-enum order_status {
-  waiting_confirm @map("waiting-confirm")
-  success
-  cancel
-}
-
 enum user_role {
   admin
   user
 }
 
+enum order_status {
+  waiting_confirm
+  success
+  cancel
+}
+
 enum item_category {
   entertainment
-  work              @map(" 'work")
-  learn             @map(" 'learn")
-  game_steam        @map(" 'game-steam")
-  ea_games          @map(" 'ea-games")
-  window_office     @map(" 'window-office")
-  google_drive      @map(" 'google-drive")
-  steam_wallet      @map(" 'steam-wallet")
-  google_play_itune @map(" 'google-play-itune")
+  work
+  learn
+  game_steam
+  ea_games
+  window_office
+  google_drive
+  steam_wallet
+  google_play_itune
 }
