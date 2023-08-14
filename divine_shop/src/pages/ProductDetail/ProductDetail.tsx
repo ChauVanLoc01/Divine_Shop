@@ -7,7 +7,7 @@ import { calculate_discount, format_currency } from 'src/utils/utils'
 
 function ProductDetail() {
   const { productId } = useParams()
-  const { data, isFetching } = useGetItemQuery(productId?.split(',')[1] as string)
+  const { data } = useGetItemQuery(productId?.split(',')[1] as string)
   if (!data) {
     return <div>alo</div>
   }

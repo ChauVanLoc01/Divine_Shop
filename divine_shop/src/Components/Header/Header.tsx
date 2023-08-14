@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function Header() {
   return (
     <div className='text-white'>
@@ -86,7 +88,7 @@ function Header() {
       <div className='bg-[#2579F2]'>
         <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm lg:py-3 py-1 lg:space-y-3 space-y-1'>
           <div className='flex justify-between'>
-            <div className='text-3xl font-mono lg:flex hidden items-center space-x-3 hover:cursor-pointer'>
+            <Link to={'/'} className='text-3xl font-mono lg:flex hidden items-center space-x-3 hover:cursor-pointer'>
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -104,7 +106,7 @@ function Header() {
                 </svg>
               </span>{' '}
               <span>Store</span>
-            </div>
+            </Link>
             <div className='flex justify-center items-center lg:hidden'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
