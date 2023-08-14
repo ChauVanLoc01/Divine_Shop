@@ -7,7 +7,7 @@ services:
     environment:
       - HOST_STORE=18.141.160.212
       - REDIS_HOST_STORE=redis
-      - DATABASE_URL=mysql://chauvanloc:taizzz.bongdem220401@my-store-db.cy0uyyfcljw9.ap-southeast-1.rds.amazonaws.com:3306/divine_store?schema=public
+      - DATABASE_URL=mysql://alo:alo@my-store-db.cy0uyyfcljw9.ap-southeast-1.rds.amazonaws.com:3306/divine_store?schema=public
       - STORE_PORT=1234
       - SECRET_ACCESS_TOKEN="SECRET_ACCESS_TOKEN"
       - SECRET_REFRESH_TOKEN="SECRET_REFRESH_TOKEN"
