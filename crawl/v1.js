@@ -1,6 +1,7 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const { v4: uuidv4 } = require("uuid");
 const prisma = new PrismaClient();
+const axios = require("axios");
 
 const entertamain = [
   {
@@ -1076,32 +1077,38 @@ const google_play_itune = [
     category: "google_play_itune",
   };
 });
-const result = [
-  ...entertamain,
-  ...work,
-  ...learn,
-  ...game_steam,
-  ...ea_games,
-  ...window_office,
-  ...google_drive,
-  ...steam_wallet,
-  ...google_play_itune,
-].map((e) => {
-  const quantity = Math.floor(Math.random() * 200);
-  return {
-    ...e,
-    priceBeforeDiscount: Number(
-      e.priceBeforeDiscount.replaceAll("đ", "").replaceAll(".", "")
-    ),
-    price: Number(e.price.replaceAll("đ", "").replaceAll(".", "")),
-    quantity,
-    sold: Math.floor(Math.random() * quantity),
-    item_id: uuidv4(),
-  };
-});
-async function test() {
+async function convert() {
+  const result = await Promise.all(
+    [
+      ...entertamain,
+      ...work,
+      ...learn,
+      ...game_steam,
+      ...ea_games,
+      ...window_office,
+      ...google_drive,
+      ...steam_wallet,
+      ...google_play_itune,
+    ].map(async (e) => {
+      try {
+        const quantity = Math.floor(Math.random() * 200);
+        await axios.get(e.image);
+        return {
+          ...e,
+          item_id: uuidv4(),
+          price: Number(e.price.replaceAll("đ", "").replaceAll(".", "")),
+          priceBeforeDiscount: Number(
+            e.priceBeforeDiscount.replaceAll("đ", "").replaceAll(".", "")
+          ),
+          quantity,
+          sold: Math.floor(Math.random() * quantity),
+        };
+      } catch (error) {}
+    })
+  );
   await prisma.item.createMany({
     data: result,
   });
+  console.log("ok");
 }
-test().then(console.log("ok"));
+convert();
