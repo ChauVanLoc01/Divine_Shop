@@ -12,6 +12,8 @@ import FavorateProduct from './pages/User/FavorateProduct'
 import MyCmt from './pages/User/MyCmt'
 import OrderDetail from './pages/User/OrderHistory/OrderDetail'
 import Cart from './pages/Cart'
+import Viewed from './pages/View'
+import Form from './Components/Form'
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
               <Route path='my-cmt' element={<MyCmt />} />
             </Route>
             <Route path='cart' element={<Cart />} />
+            <Route path='viewed' element={<Viewed />} />
+            {/* <Route path='login' element={<Form isLogin={true} />} /> */}
           </Route>
         </Routes>
       </div>

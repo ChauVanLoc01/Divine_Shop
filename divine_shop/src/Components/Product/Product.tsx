@@ -1,6 +1,8 @@
 import classNames from 'classnames'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Item } from 'src/Types/items.type'
+import { addItems } from 'src/utils/slices/items.slice'
 import { calculate_discount, createSlug, format_currency } from 'src/utils/utils'
 
 type ProductProps = {
@@ -9,13 +11,18 @@ type ProductProps = {
 }
 
 function Product({ bgColor, product }: ProductProps) {
+  const dispatch = useDispatch()
+
+  const handleViewed = () => {
+    dispatch(addItems(product))
+  }
   return (
     <div
       className={classNames('relative flex flex-col justify-between', {
         'text-white': bgColor
       })}
     >
-      <Link to={createSlug(product.item_name, product.item_id)} className='relative'>
+      <Link to={createSlug(product.item_name, product.item_id)} onClick={handleViewed} className='relative'>
         <img className='rounded-md cursor-pointer w-full object-cover' src={product.image} alt='Product Image' />
         <span
           className={classNames('text-white hidden px-2 py-1 bg-zinc-800 rounded-md absolute top-1 left-1', {
@@ -28,6 +35,7 @@ function Product({ bgColor, product }: ProductProps) {
       <div>
         <Link
           to={createSlug(product.item_name, product.item_id)}
+          onClick={handleViewed}
           className='line-clamp-1 md:line-clamp-2 cursor-pointer pt-2 pb-1 md:pb-0 md:pt-1 md:h-[70px]'
         >
           {product.item_name}

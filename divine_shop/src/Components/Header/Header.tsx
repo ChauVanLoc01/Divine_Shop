@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Form from '../Form'
 
 function Header() {
   return (
@@ -159,27 +160,33 @@ function Header() {
               </button>
             </form>
             <div className='md:flex items-center space-x-2 hidden'>
-              <button className='group transition-all duration-200 flex items-center space-x-2'>
-                <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='w-6 h-6'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
-                    />
-                  </svg>
-                </span>
-                <span>Đăng nhập</span>
-              </button>
+              <Form
+                isLogin={true}
+                buttonClass='group transition-all duration-200 flex items-center space-x-2'
+                content={
+                  <>
+                    <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='w-6 h-6'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
+                        />
+                      </svg>
+                    </span>
+                    <span>Đăng nhập</span>
+                  </>
+                }
+              />
               <span>/</span>
-              <button>Đăng ký</button>
+              <Form isLogin={false} content='Đăng kí' />
             </div>
             <div className='p-2'>
               <button className='flex items-center space-x-2 py-1 px-2  lg:p-2 border-[1px] hover:bg-[#2985FF] transition-all duration-200 border-white rounded-md'>
@@ -204,7 +211,10 @@ function Header() {
           </div>
           <div className='overflow-x-scroll pb-2 lg:pb-0 hide-scroll-bar'>
             <div className='flex lg:justify-between justify-stretch space-x-5'>
-              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'>
+              <Link
+                to={'viewed'}
+                className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'
+              >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -221,7 +231,7 @@ function Header() {
                   <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
                 </svg>
                 <span>Sản phẩm bạn vừa xem</span>
-              </div>
+              </Link>
               <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -299,7 +309,7 @@ function Header() {
           </div>
         </div>
       </div>
-      <div className='bg-white text-gray-700 font-semibold lg:block hidden'>
+      <div className='bg-gray-50 text-gray-700 font-semibold lg:block hidden border border-b-gray-100'>
         <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-2 flex items-center justify-between'>
           <button className='flex space-x-1 xl:space-x-2'>
             <svg

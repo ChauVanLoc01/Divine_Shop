@@ -3,7 +3,7 @@ import { ItemListResult, ItemQuery, ItemResult } from 'src/Types/items.type'
 import { baseUrl } from 'src/constants/base-url.constants'
 import { omitBy, isUndefined } from 'lodash'
 
-export const itemApi = createApi({
+const itemApi = createApi({
   reducerPath: 'itemApi',
   baseQuery: fetchBaseQuery({
     baseUrl
@@ -28,3 +28,9 @@ export const itemApi = createApi({
 })
 
 export const { useGetItemListQuery, useGetItemQuery } = itemApi
+
+export const ItemsApiMiddleware = itemApi.middleware
+
+export const ItemsApiPath = itemApi.reducerPath
+
+export const ItemsApi = itemApi.reducer

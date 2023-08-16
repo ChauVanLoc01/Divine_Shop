@@ -1106,9 +1106,8 @@ async function convert() {
       } catch (error) {}
     })
   );
-  await prisma.item.createMany({
-    data: result,
-  });
-  console.log("ok");
+  // await prisma.item.createMany({
+  //   data: result,
+  // });
 }
-convert();
+console.log(convert());
