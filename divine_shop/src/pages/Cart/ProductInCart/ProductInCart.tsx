@@ -2,7 +2,7 @@ import NumberInput from 'src/Components/NumberInput'
 
 function ProductInCart() {
   return (
-    <div className='flex md:flex-row flex-col md:gap-x-5 md:gap-y-0 gap-y-3'>
+    <div className='flex md:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3'>
       <div className='basis-1/3 overflow-hidden'>
         <img
           className='w-full bg-cover rounded-md'
@@ -18,12 +18,14 @@ function ProductInCart() {
             </div>
             <div className='text-gray-600'>App, Giải trí, Xem phim</div>
           </div>
-          <div className='flex justify-evenly md:justify-start space-x-10'>
+          <div className='flex justify-evenly md:justify-start space-x-5'>
             <div>
               <NumberInput />
             </div>
             <div className='space-x-4'>
-              <span className='py-1 px-2 text-white bg-red-600 rounded-md'>-66%</span>
+              <span className='py-1 px-2 text-white bg-red-600 rounded-md absolute top-0 right-0 rotate-12 md:static'>
+                -66%
+              </span>
               <span className='line-through text-gray-500'>260.000đ</span>
               <span className='font-semibold md:text-lg text-base'>89.000đ</span>
             </div>

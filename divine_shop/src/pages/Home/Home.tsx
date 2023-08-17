@@ -5,16 +5,15 @@ import { useGetItemListQuery } from 'src/utils/apis/items.api'
 import { ItemCategoryEnum, OrderEnum } from 'src/Types/items.type'
 
 function Home() {
-  const { data: data_game_stream, isFetching: isFetchingGameStream } = useGetItemListQuery({
+  const { data: data_game_stream } = useGetItemListQuery({
     category: ItemCategoryEnum.game_steam
   })
-  const { data: data_new, isFetching: isFetchingNew } = useGetItemListQuery({
+  const { data: data_new } = useGetItemListQuery({
     order_by_created: OrderEnum.desc
   })
-  const { data: data_best_sold, isFetching: isFetchingBestSold } = useGetItemListQuery({
+  const { data: data_best_sold } = useGetItemListQuery({
     order_by_sold: OrderEnum.desc
   })
-
   return (
     <div className='bg-[#F3F4F6] lg:py-4 space-y-8'>
       <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm'>
@@ -74,7 +73,7 @@ function Home() {
         title='Sản phẩm mới'
         desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
         hasButton={true}
-        content={data_new && !isFetchingNew ? <Paging products={data_new.data.items} /> : <div>alo</div>}
+        content={<Paging products={data_new?.data.items} page_size={data_best_sold?.data.query.page_size} />}
       />
       <Banner
         title='Từ khóa nổi bật'
@@ -114,11 +113,11 @@ function Home() {
         }
         img='https://divineshop.vn/static/0de2668c294edf9d5fd8a8647b2c65b6.png'
         content={
-          data_best_sold && !isFetchingBestSold ? (
-            <Paging products={data_best_sold.data.items} bgColor='bg-[#000D21]' />
-          ) : (
-            <div>alo</div>
-          )
+          <Paging
+            products={data_best_sold?.data.items}
+            page_size={data_best_sold?.data.query.page_size}
+            bgColor='bg-[#000D21]'
+          />
         }
         hasButton={true}
       />
@@ -140,9 +139,7 @@ function Home() {
         title='Game trên Steam'
         hasButton={true}
         desc='Những trò chơi được đánh giá tốt, nội dung hấp dẫn thu hút đang chờ bạn'
-        content={
-          data_game_stream && !isFetchingGameStream ? <Paging products={data_game_stream.data.items} /> : <div>alo</div>
-        }
+        content={<Paging products={data_game_stream?.data.items} page_size={data_game_stream?.data.query.page_size} />}
       />
     </div>
   )

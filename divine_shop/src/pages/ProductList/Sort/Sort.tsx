@@ -1,6 +1,11 @@
+import { ItemQuery } from 'src/Types/items.type'
 import ListBox from './ListBox'
 
-function Sort() {
+type SortProps = {
+  setQuery: React.Dispatch<React.SetStateAction<ItemQuery>>
+}
+
+function Sort({ setQuery }: SortProps) {
   return (
     <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm space-y-4'>
       <div className='font-semibold text-2xl'>Tìm kiếm sản phẩm</div>

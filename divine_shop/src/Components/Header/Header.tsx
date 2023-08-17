@@ -1,7 +1,22 @@
-import { Link } from 'react-router-dom'
+import { Link, useMatch, useNavigate } from 'react-router-dom'
 import Form from '../Form'
+import classNames from 'classnames'
+import { Path } from 'src/App'
+import { useState } from 'react'
 
 function Header() {
+  const path = useMatch(Path.viewed)
+  const [search, setSearch] = useState<string>('')
+  const navigate = useNavigate()
+  const handSearch = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    if (search.length > 0) {
+      navigate({
+        pathname: Path.search,
+        search: `item_name=${search}`
+      })
+    }
+  }
   return (
     <div className='text-white'>
       <div className='bg-[#0A59CC] py-2 lg:block hidden'>
@@ -108,21 +123,25 @@ function Header() {
               </span>{' '}
               <span>Store</span>
             </Link>
-            <div className='flex justify-center items-center lg:hidden'>
+            <button className='flex justify-center items-center lg:hidden'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='lg:w-10 lg:h-10 w-8 h-8 stroke-2'
+                className='md:w-12 w-10 h-10 stroke-2 md:h-12'
               >
                 <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
               </svg>
-            </div>
+            </button>
             <form className='flex md:w-[35%] w-[55%] py-2'>
               <div className='relative w-full'>
-                <button type='button' className='absolute right-1 top-1/2 -translate-y-1/2 text-gray-500'>
+                <button
+                  onClick={() => setSearch('')}
+                  type='button'
+                  className='absolute right-1 top-1/2 -translate-y-1/2 text-gray-500'
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -136,13 +155,15 @@ function Header() {
                 </button>
                 <input
                   className='w-full h-full rounded-l-md text-gray-600 outline-none md:pl-4 md:pr-6 pl-3 pr-5'
+                  onChange={(e) => setSearch(e.target.value)}
                   type='text'
                   name='search'
                   id='search'
                   placeholder=''
+                  value={search}
                 />
               </div>
-              <button type='submit' className='bg-[#0B62E0] px-3 rounded-r-md'>
+              <button onClick={handSearch} type='submit' className='bg-[#0B62E0] px-3 rounded-r-md'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -189,7 +210,10 @@ function Header() {
               <Form isLogin={false} content='Đăng kí' />
             </div>
             <div className='p-2'>
-              <button className='flex items-center space-x-2 py-1 px-2  lg:p-2 border-[1px] hover:bg-[#2985FF] transition-all duration-200 border-white rounded-md'>
+              <button
+                onClick={() => navigate(`${Path.cart}`)}
+                className='flex items-center space-x-2 py-1 px-2  lg:p-2 border-[1px] hover:bg-[#2985FF] transition-all duration-200 border-white rounded-md'
+              >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -213,7 +237,12 @@ function Header() {
             <div className='flex lg:justify-between justify-stretch space-x-5'>
               <Link
                 to={'viewed'}
-                className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'
+                className={classNames(
+                  'space-x-2 flex items-center hover:underline hover:underline-offset-4 hover:cursor-pointer flex-shrink-0',
+                  {
+                    'underline underline-offset-4': path
+                  }
+                )}
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -232,7 +261,7 @@ function Header() {
                 </svg>
                 <span>Sản phẩm bạn vừa xem</span>
               </Link>
-              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'>
+              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0 hover:underline-offset-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -254,7 +283,7 @@ function Header() {
                 </svg>
                 <span>Sản phẩm mua nhiều</span>
               </div>
-              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'>
+              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0 hover:underline-offset-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -271,7 +300,7 @@ function Header() {
                 </svg>
                 <span>Sản phẩm khuyến mãi</span>
               </div>
-              <div className='space-x-2 hidden xl:flex items-center hover:underline hover:cursor-pointer'>
+              <div className='space-x-2 hidden xl:flex items-center hover:underline hover:cursor-pointer hover:underline-offset-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -288,7 +317,7 @@ function Header() {
                 </svg>
                 <span>Đại lý giao dịch</span>
               </div>
-              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0'>
+              <div className='space-x-2 flex items-center hover:underline hover:cursor-pointer flex-shrink-0 hover:underline-offset-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'

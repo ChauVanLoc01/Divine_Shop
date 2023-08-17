@@ -31,39 +31,54 @@ type FormPortalProps = {
 }
 
 const FormPortal = ({ isLogin, setIsOpen }: FormPortalProps) => {
-  const handleExit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {}
+  const handleExit = () => {
+    setIsOpen(false)
+  }
+  const [jump, setJump] = useState(isLogin)
   return createPortal(
-    <div
-      className='h-screen flex items-center lg:text-base text-sm w-screen z-50 top-0 left-0 fixed'
-      id='parent'
-      onClick={handleExit}
-    >
-      <div className='bg-zinc-950 bg-opacity-80 w-screen h-screen top-0 left-0'></div>
-      <div className='lg:w-[85%] md:scale-90 xl:w-[80%] w-[90%] bg-white p-4 md:p-6 flex mx-auto border-2 space-x-5 rounded-lg z-10'>
-        <div className='space-y-6'>
+    <div className='h-screen flex items-center lg:text-base text-sm w-screen z-50 top-0 left-0 fixed' id='parent'>
+      <div onClick={handleExit} className='bg-zinc-950 bg-opacity-80 w-screen h-screen top-0 left-0 absolute' />
+      <div className='lg:w-[85%] md:scale-90 xl:w-[70%] w-[90%] bg-white p-4 md:p-6 flex mx-auto border-2 space-x-5 rounded-lg z-10'>
+        <div className='space-y-6 md:basis-3/5 w-full'>
           <form className='space-y-3 xl:space-y-4 md:static relative'>
             <div className='text-2xl font-semibold space-x-4'>
-              <a
+              <button
+                type='button'
                 className={classNames('hover:underline hover:decoration-2', {
-                  'text-gray-500': !isLogin
+                  'text-gray-500': !jump
                 })}
-                href=''
+                onClick={() => setJump(!jump)}
               >
                 Đăng nhập
-              </a>
-              <a
+              </button>
+              <button
+                type='button'
                 className={classNames('hover:underline hover:decoration-2', {
-                  'text-gray-500': isLogin
+                  'text-gray-500': jump
                 })}
-                href=''
+                onClick={() => setJump(!jump)}
               >
                 Đăng kí
-              </a>
+              </button>
             </div>
             <div>
-              {isLogin ? 'Đăng nhập' : 'Đăng kí'} để theo dõi đơn hàng, lưu danh sách sản phẩm yêu thích và nhận nhiều
-              ưu đãi hấp dẫn
+              {jump
+                ? 'Đăng nhập để theo dõi đơn hàng, lưu danh sách sản phẩm yêu thích và nhận nhiều ưu'
+                : 'Đăng kí để nhận nhiều ưu đãi hấp dẫn'}
             </div>
+            {!jump && (
+              <div className='relative'>
+                <label className='text-gray-400 absolute top-0 left-3 xl:text-sm text-xs' htmlFor='name'>
+                  Tên
+                </label>
+                <input
+                  className='w-full hover:ring-2 focus:ring-2 ring-[#2579F2] bg-[#E8F0FE] border-[1px] rounded-md px-3 pt-4 xl:pt-5 pb-1 outline-none'
+                  type='text'
+                  name='name'
+                  id='name'
+                />
+              </div>
+            )}
             <div className='relative'>
               <label className='text-gray-400 absolute top-0 left-3 xl:text-sm text-xs' htmlFor='email'>
                 Email
@@ -86,9 +101,11 @@ const FormPortal = ({ isLogin, setIsOpen }: FormPortalProps) => {
                 id='email'
               />
             </div>
-            <div className='text-[#2579F2]'>
-              <a href=''>Bạn quên mật khẩu?</a>
-            </div>
+            {jump && (
+              <div className='text-[#2579F2]'>
+                <a href=''>Bạn quên mật khẩu?</a>
+              </div>
+            )}
             <div>
               <button
                 type='submit'
@@ -97,24 +114,24 @@ const FormPortal = ({ isLogin, setIsOpen }: FormPortalProps) => {
                 Đăng nhập
               </button>
             </div>
-            <button className='absolute -top-6 -right-3 md:hidden' onClick={() => setIsOpen(false)}>
+            <button className='absolute -top-5 -right-2 md:hidden' onClick={() => setIsOpen(false)}>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='w-6 h-6 stroke-[3px] text-gray-500'
+                className='w-4 md:w-6 h-4 md:h-6 stroke-[3px] text-gray-500'
               >
                 <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
               </svg>
             </button>
           </form>
           <div className='border-t-[1px] relative pt-6'>
-            <span className='absolute -top-[1px] bg-white left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-600 md:inline-block hidden px-1'>
+            <span className='absolute -top-[1px] bg-white left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-600 lg:inline-block hidden px-1'>
               Hoặc đăng nhập bằng
             </span>
-            <span className='absolute -top-[1px] bg-white left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-600 md:hidden inline-block px-1'>
+            <span className='absolute -top-[1px] bg-white left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-600 lg:hidden inline-block px-1'>
               Đăng nhập với
             </span>
             <div className='flex justify-center items-center space-x-4'>
@@ -130,7 +147,7 @@ const FormPortal = ({ isLogin, setIsOpen }: FormPortalProps) => {
             </div>
           </div>
         </div>
-        <div className='md:w-4/5 hidden md:flex items-center relative'>
+        <div className='md:basis-2/5 hidden md:flex items-center relative'>
           <button className='absolute top-0 right-0' onClick={() => setIsOpen(false)}>
             <svg
               xmlns='http://www.w3.org/2000/svg'

@@ -1,12 +1,16 @@
 import Cmt from '../Cmt'
 
+type CmtPagingProps = {
+  cmts: []
+}
+
 function CmtPaging() {
   return (
     <div className='space-y-5'>
       {Array(10)
         .fill(0)
-        .map((c) => (
-          <Cmt />
+        .map((_, i) => (
+          <Cmt key={i} />
         ))}
       <div className='text-[#2579F2] font-semibold py-5 border-t border-gray-200'>
         <button className='flex space-x-2 items-center'>

@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  divine-fe:
+    image: chauvanloc/divine-fe
+    volumes:
+      - .:/app
+      - node_modules_fe:/app/node_modules
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+volumes:
+  node_modules_fe:

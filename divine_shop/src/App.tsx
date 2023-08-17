@@ -13,7 +13,18 @@ import MyCmt from './pages/User/MyCmt'
 import OrderDetail from './pages/User/OrderHistory/OrderDetail'
 import Cart from './pages/Cart'
 import Viewed from './pages/View'
-import Form from './Components/Form'
+
+export enum Path {
+  search = 'search',
+  user = 'user',
+  profile = 'profile',
+  password = 'password',
+  history = 'history',
+  favorate = 'favorate',
+  my_cmt = 'my-cmt',
+  cart = 'cart',
+  viewed = 'viewed'
+}
 
 function App() {
   return (
@@ -23,20 +34,19 @@ function App() {
         <Routes>
           <Route path='/'>
             <Route index element={<Home />} />
-            <Route path='search' element={<ProductList />} />
-            <Route path=':productId' element={<ProductDetail />} />
-            <Route path='user' element={<User />}>
-              <Route path='profile' element={<Profile />} />
-              <Route path='password' element={<Password />} />
-              <Route path='history' element={<OrderHistory />}>
+            <Route path={Path.search} element={<ProductList />} />
+            <Route path={Path.user} element={<User />}>
+              <Route path={Path.profile} element={<Profile />} />
+              <Route path={Path.password} element={<Password />} />
+              <Route path={Path.history} element={<OrderHistory />}>
                 <Route path=':orderId' element={<OrderDetail />} />
               </Route>
-              <Route path='favorate' element={<FavorateProduct />} />
-              <Route path='my-cmt' element={<MyCmt />} />
+              <Route path={Path.favorate} element={<FavorateProduct />} />
+              <Route path={Path.my_cmt} element={<MyCmt />} />
             </Route>
-            <Route path='cart' element={<Cart />} />
-            <Route path='viewed' element={<Viewed />} />
-            {/* <Route path='login' element={<Form isLogin={true} />} /> */}
+            <Route path={Path.cart} element={<Cart />} />
+            <Route path={Path.viewed} element={<Viewed />} />
+            <Route path=':productId' element={<ProductDetail />} />
           </Route>
         </Routes>
       </div>
