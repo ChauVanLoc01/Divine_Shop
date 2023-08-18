@@ -3,8 +3,11 @@ import Form from '../Form'
 import classNames from 'classnames'
 import { Path } from 'src/App'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store'
 
 function Header() {
+  const buy_items = useSelector((state: RootState) => state.ItemsSliceName.cart)
   const path = useMatch(Path.viewed)
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate()
@@ -229,7 +232,9 @@ function Header() {
                   />
                 </svg>
                 <span className='md:block hidden'>Giỏ hàng</span>
-                <span className='text-gray-600 bg-white rounded-md px-1'>0</span>
+                <span className='text-gray-600 bg-white rounded-md px-1 w-7'>
+                  {buy_items.length > 9 ? '9+' : buy_items.length}
+                </span>
               </button>
             </div>
           </div>

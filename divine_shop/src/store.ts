@@ -1,14 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { ItemsApiPath, ItemsApi, ItemsApiMiddleware } from './utils/apis/items.api'
 import { ItemsSlice } from './utils/slices/items.slice'
+import { UserApi, UserApiMiddleware, UserApiPath } from './utils/apis/user.api'
 
 export const store = configureStore({
   reducer: {
     ItemsSliceName: ItemsSlice,
-    [ItemsApiPath]: ItemsApi
+    [ItemsApiPath]: ItemsApi,
+    [UserApiPath]: UserApi
   },
   middleware(getDefaultMiddleware) {
-    return getDefaultMiddleware().concat(ItemsApiMiddleware)
+    return getDefaultMiddleware().concat(ItemsApiMiddleware, UserApiMiddleware)
   }
 })
 

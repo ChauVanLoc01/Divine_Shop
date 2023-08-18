@@ -32,6 +32,7 @@ export type Item = {
 }
 
 export type ItemQuery = {
+  many?: string
   item_name?: string
   category?: ItemCategoryEnum
   price_min?: number

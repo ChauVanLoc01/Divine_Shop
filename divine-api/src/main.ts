@@ -20,6 +20,7 @@ async function bootstrap() {
     .setTitle('Store Api')
     .setDescription('The api for store')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
@@ -44,10 +45,5 @@ async function bootstrap() {
   app.useGlobalFilters(new CatchEveryThing());
 
   await app.listen(process.env.STORE_PORT || 1234);
-
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
 }
 bootstrap();

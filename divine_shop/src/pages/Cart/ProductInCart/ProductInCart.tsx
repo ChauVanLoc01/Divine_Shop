@@ -1,33 +1,52 @@
+import { useDispatch } from 'react-redux'
+import LinkToTop from 'src/Components/LinkToTop'
 import NumberInput from 'src/Components/NumberInput'
+import { AppDispatch } from 'src/store'
+import { BuyItem, deleteItemsFromCart } from 'src/utils/slices/items.slice'
+import { calculate_discount, createSlug, format_currency } from 'src/utils/utils'
 
-function ProductInCart() {
+type ProductInCartProps = {
+  item: BuyItem
+}
+
+function ProductInCart({ item }: ProductInCartProps) {
+  const dispatch = useDispatch<AppDispatch>()
+  const handleRemoveItem = () => {
+    dispatch(
+      deleteItemsFromCart({
+        item_id: item.item_id,
+        amount: item.buy_amount
+      })
+    )
+  }
   return (
     <div className='flex md:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3'>
-      <div className='basis-1/3 overflow-hidden'>
-        <img
-          className='w-full bg-cover rounded-md'
-          src='https://cdn.divineshop.vn/image/catalog/Anh-SP/Netflix/Divine-Shop-NETFLIX-1-thang-23298.jpg?hash=1658829694'
-          alt='picture'
-        />
-      </div>
+      <LinkToTop to={`/${createSlug(item.item_name, item.item_id)}`} className='basis-1/3 overflow-hidden'>
+        <img className='w-full bg-cover rounded-md' src={item.image} alt='picture' />
+      </LinkToTop>
       <div className='basis-2/3 space-y-3 divide-y divide-gray-200'>
         <div className='space-y-3'>
           <div>
-            <div className='font-medium line-clamp-2 text-base md:text-lg'>
-              Tài Khoản Netflix Premium 1 tháng - Xem phim chất lượng 4k và Full HD
-            </div>
-            <div className='text-gray-600'>App, Giải trí, Xem phim</div>
+            <LinkToTop
+              to={`/${createSlug(item.item_name, item.item_id)}`}
+              className='font-medium line-clamp-2 text-base md:text-lg'
+            >
+              {item.item_name} {item.quantity}
+            </LinkToTop>
+            <div className='text-gray-600'>{item.category}</div>
           </div>
-          <div className='flex justify-evenly md:justify-start space-x-5'>
+          <div className='flex justify-between md:justify-between items-center'>
             <div>
-              <NumberInput />
+              <NumberInput item={item} />
             </div>
-            <div className='space-x-4'>
-              <span className='py-1 px-2 text-white bg-red-600 rounded-md absolute top-0 right-0 rotate-12 md:static'>
-                -66%
+            <div>
+              <span className='py-1 px-2 text-white bg-red-600 rounded-md absolute top-0 right-0 rotate-12 md:rotate-0 md:static'>
+                -{calculate_discount(item.price, item.priceBeforeDiscount)}%
               </span>
-              <span className='line-through text-gray-500'>260.000đ</span>
-              <span className='font-semibold md:text-lg text-base'>89.000đ</span>
+            </div>
+            <div className='space-x-2'>
+              <span className='line-through text-gray-500'>{format_currency(item.priceBeforeDiscount)}</span>
+              <span className='font-semibold md:text-lg text-base'>{format_currency(item.price)}</span>
             </div>
           </div>
         </div>
@@ -51,10 +70,10 @@ function ProductInCart() {
             </span>
             <div className='space-x-2'>
               <span className='ml-2'>Tình trạng:</span>
-              <span className='text-green-600'>Còn hàng</span>
+              <span className='text-green-600'>{item.quantity > 0 ? 'còn hàng' : 'hết hàng'}</span>
             </div>
           </div>
-          <button className='text-red-600'>
+          <button className='text-red-600' onClick={handleRemoveItem}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'

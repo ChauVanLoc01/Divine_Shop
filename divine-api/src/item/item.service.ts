@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SuccessResponse } from '../types/Response.type';
 import { Prisma, item } from '@prisma/client';
@@ -23,16 +18,17 @@ export class ItemService {
     if (!item) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'Item is not exist',
+        message: 'Sản phẩm không tồn tại',
       });
     }
     return {
-      message: 'Get item detail successfully',
+      message: 'Lấy thông tin sản phẩm thành công',
       data: item,
     };
   }
 
   async getListItem(
+    many?: string,
     item_name?: string,
     category?:
       | 'entertainment'
@@ -75,10 +71,20 @@ export class ItemService {
         message: 'Maximum 1 order property',
       });
     }
+    const items_id = many && many.includes(',') ? many.split(',') : many;
     const take = limit ? limit : Number(process.env.LIMIT_STORE);
     const [tmp, items] = await Promise.all([
       this.prisma.item.findMany({
         where: {
+          item_id: many
+            ? typeof items_id === 'string'
+              ? {
+                  equals: items_id,
+                }
+              : {
+                  in: items_id,
+                }
+            : undefined,
           item_name: item_name
             ? {
                 contains: item_name,
@@ -104,6 +110,15 @@ export class ItemService {
       }),
       this.prisma.item.findMany({
         where: {
+          item_id: many
+            ? typeof items_id === 'string'
+              ? {
+                  equals: items_id,
+                }
+              : {
+                  in: items_id,
+                }
+            : undefined,
           item_name: item_name
             ? {
                 contains: item_name,
@@ -137,7 +152,7 @@ export class ItemService {
       }),
     ]);
     return {
-      message: 'Get item list successfully',
+      message: 'Lấy thông tin danh sách sản phẩm thành công',
       data: {
         items,
         query: omitBy(

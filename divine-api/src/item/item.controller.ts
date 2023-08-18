@@ -15,7 +15,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ItemQueryDTO } from './dto/item-query.dto';
 import { Public } from '../commons/Metadata/public.metadata';
 import { Admin } from '../commons/Metadata/role.metadata';
@@ -38,6 +38,7 @@ export class ItemController {
   listItem(
     @Query()
     {
+      many,
       item_name,
       category,
       price_max,
@@ -51,6 +52,7 @@ export class ItemController {
     }: ItemQueryDTO,
   ) {
     return this.itemService.getListItem(
+      many,
       item_name,
       category,
       price_max,
@@ -70,6 +72,7 @@ export class ItemController {
     return this.itemService.getDetail(slug);
   }
 
+  @ApiBearerAuth()
   @Admin()
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -116,10 +119,12 @@ export class ItemController {
     });
   }
 
+  @ApiBearerAuth()
   @Admin()
   @Put('slug')
   update() {}
 
+  @ApiBearerAuth()
   @Admin()
   @Delete(':slug')
   delete(@Param('slug') slug: string) {

@@ -20,7 +20,7 @@ import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { Public } from '../commons/Metadata/public.metadata';
 import { Request, Response } from 'express';
 import { ChangePasswordDTO } from './dto/change-password.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Admin } from '../commons/Metadata/role.metadata';
 
 @ApiTags('Users')
@@ -76,6 +76,7 @@ export class UserController {
     return this.userService.resetPassword(code, current_password, new_password);
   }
 
+  @ApiBearerAuth()
   @HttpCode(200)
   @Put('password/change')
   changePassword(
@@ -89,6 +90,7 @@ export class UserController {
     );
   }
 
+  @ApiBearerAuth()
   @Get('logout')
   logout(@Req() req: ReqWithLocal) {
     return this.userService.logout(
@@ -109,18 +111,21 @@ export class UserController {
     );
   }
 
+  @ApiBearerAuth()
   @Admin()
   @Get('profiles')
-  profiles() {
-    return this.userService.profiles();
+  profilesCustomer() {
+    return this.userService.profilesCustomer();
   }
 
+  @ApiBearerAuth()
   @Admin()
   @Get('profiles/:slug')
-  profilesDetail(@Param('slug') slug: string) {
-    return this.userService.profilesDetail(slug);
+  profilesDetailCustomer(@Param('slug') slug: string) {
+    return this.userService.profilesDetailCustomer(slug);
   }
 
+  @ApiBearerAuth()
   @Get('profile')
   profile(@Req() req: ReqWithLocal) {
     return this.userService.profile(req.user.user_id);

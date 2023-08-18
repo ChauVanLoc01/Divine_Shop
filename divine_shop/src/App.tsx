@@ -13,6 +13,7 @@ import MyCmt from './pages/User/MyCmt'
 import OrderDetail from './pages/User/OrderHistory/OrderDetail'
 import Cart from './pages/Cart'
 import Viewed from './pages/View'
+import { ToastContainer } from 'react-toastify'
 
 export enum Path {
   search = 'search',
@@ -51,6 +52,7 @@ function App() {
         </Routes>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   )
 }

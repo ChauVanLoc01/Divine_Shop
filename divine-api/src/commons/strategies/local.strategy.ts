@@ -32,16 +32,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         errors: Object.fromEntries(data_err),
       });
     }
-    const result: user | string = await this.userService.validate(
-      email,
-      password,
-    );
-    if (typeof result === 'string') {
-      throw new MyException({
-        status_code: HttpStatus.UNAUTHORIZED,
-        message: result,
-      });
-    }
+    const result: user = await this.userService.validate(email, password);
     const { user_id, role } = result;
     return {
       user_id,

@@ -9,9 +9,13 @@ export type FailResponse = {
 export type ValidationFailResponse = {
   status_code: number;
   message: string;
-  errors: {
-    [key: string]: {
-      [property: string]: string;
-    };
-  };
+  errors:
+    | {
+        [key: string]: {
+          [property: string]: string;
+        };
+      }
+    | {
+        [key: string]: string;
+      };
 };

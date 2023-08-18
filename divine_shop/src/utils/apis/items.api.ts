@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ItemListResult, ItemQuery, ItemResult } from 'src/Types/items.type'
-import { baseUrl } from 'src/constants/base-url.constants'
 import { omitBy, isUndefined } from 'lodash'
 
-const itemApi = createApi({
-  reducerPath: 'itemApi',
+const ItemApi = createApi({
+  reducerPath: 'ItemApi',
   baseQuery: fetchBaseQuery({
-    baseUrl
+    baseUrl: import.meta.env.VITE_BASEURL
   }),
   endpoints: (build) => ({
     getItemList: build.query<ItemListResult, ItemQuery>({
@@ -27,10 +26,10 @@ const itemApi = createApi({
   })
 })
 
-export const { useGetItemListQuery, useGetItemQuery } = itemApi
+export const { useGetItemListQuery, useGetItemQuery } = ItemApi
 
-export const ItemsApiMiddleware = itemApi.middleware
+export const ItemsApiMiddleware = ItemApi.middleware
 
-export const ItemsApiPath = itemApi.reducerPath
+export const ItemsApiPath = ItemApi.reducerPath
 
-export const ItemsApi = itemApi.reducer
+export const ItemsApi = ItemApi.reducer

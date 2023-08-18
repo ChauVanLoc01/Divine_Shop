@@ -5,10 +5,23 @@ import Information from './Information/Information'
 import { useParams } from 'react-router-dom'
 import { calculate_discount, format_currency } from 'src/utils/utils'
 import SkeletonDetail from './SkeletonDetail'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
+import { addItemsIntoCart } from 'src/utils/slices/items.slice'
+import { Item } from 'src/Types/items.type'
 
 function ProductDetail() {
   const { productId } = useParams()
   const { data } = useGetItemQuery(productId?.split(',')[1] as string)
+  const dispatch = useDispatch<AppDispatch>()
+  const handleAddItemIntoCart = () => {
+    dispatch(
+      addItemsIntoCart({
+        ...(data?.data as Item),
+        buy_amount: 1
+      })
+    )
+  }
   return (
     <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm md:py-5 py-2 border-t-[1px] border-gray-200 space-y-3 md:space-y-5'>
       {data ? (
@@ -107,7 +120,10 @@ function ProductDetail() {
                 </span>
                 <span>Mua ngay</span>
               </button>
-              <button className='text-[#2579F2] space-x-2 rounded-md px-2 md:px-3 py-2 lg:px-5 lg:py-2 flex ring-2 ring-gray-300 border-gray-300 hover:ring-2 hover:ring-[#2579F2] items-center'>
+              <button
+                className='text-[#2579F2] space-x-2 rounded-md px-2 md:px-3 py-2 lg:px-5 lg:py-2 flex ring-2 ring-gray-300 border-gray-300 hover:ring-2 hover:ring-[#2579F2] items-center'
+                onClick={handleAddItemIntoCart}
+              >
                 <span>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'

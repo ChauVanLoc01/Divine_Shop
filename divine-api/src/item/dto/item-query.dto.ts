@@ -15,6 +15,11 @@ export class ItemQueryDTO {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  many?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   item_name?: string;
 
   @ApiPropertyOptional({

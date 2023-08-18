@@ -32,20 +32,38 @@ export class UserService {
     return await bcrypt.compare(password, hash);
   }
 
-  async validate(email: string, password: string): Promise<user | string> {
+  async validate(email: string, password: string): Promise<user> {
     const user = await this.prisma.user.findFirst({
       where: {
         email,
       },
     });
     if (!user) {
-      return 'Email not found';
+      throw new MyException({
+        status_code: HttpStatus.UNAUTHORIZED,
+        message: 'unauthorized',
+        errors: {
+          email: 'không tồn tại',
+        },
+      });
     }
     if (!(await this.comparePassword(password, user.password))) {
-      return 'Password incorrect';
+      throw new MyException({
+        status_code: HttpStatus.UNAUTHORIZED,
+        message: 'unauthorized',
+        errors: {
+          password: 'không đúng',
+        },
+      });
     }
     if (!user.isActive) {
-      return 'Your account is blocked';
+      throw new MyException({
+        status_code: HttpStatus.UNAUTHORIZED,
+        message: 'unauthorized',
+        errors: {
+          block: 'Tài khoản của bạn đã bị khóa',
+        },
+      });
     }
     return user;
   }
@@ -144,7 +162,10 @@ export class UserService {
     if (user) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'User is exist!',
+        message: 'Đăng kí thất bại',
+        errors: {
+          email: 'Email đã tồn tại',
+        },
       });
     }
     const accessToken = await this.prisma.$transaction(async (tx) => {
@@ -208,12 +229,15 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'Email is not exist!',
+        message: 'Thay đổi mật khẩu thất bại',
+        errors: {
+          email: 'Email không tồn tại',
+        },
       });
     }
     try {
       const code = user.user_id + '%' + Math.random().toString(36).slice(2, 7);
-      const url = `http://${process.env.HOST_STORE}:3000/${code}`;
+      const url = `http://${process.env.HOST_STORE}:3000/password/reset/${code}`;
       await this.emailQueue.add(
         'forgot-password',
         {
@@ -223,7 +247,7 @@ export class UserService {
           email_infor: {
             to: email,
             subject: 'Reset your password',
-            html: `<p>Click <a href="${url}" style="color: red;">here</a> to reset your password!</p>`,
+            html: `<p>Truy cập vào <a href="${url}" style="color: red;">đây</a> để thay đổi password của bạn!</p>`,
           },
         },
         {
@@ -239,7 +263,7 @@ export class UserService {
       await this.cacheManager.del(String(user.user_id));
       throw new MyException({
         status_code: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Have some errors when send mail to you',
+        message: 'Có lỗi trong quá trình gửi mail đến bạn!',
       });
     }
   }
@@ -252,7 +276,10 @@ export class UserService {
     if (currentPassword === newPassword) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Both password must is different',
+        message: 'Thay đổi mật khẩu thất bại',
+        errors: {
+          new_password: 'không được giống với mật khẩu hiện tại',
+        },
       });
     }
     const [user_id, _] = code.split('%');
@@ -260,7 +287,7 @@ export class UserService {
     if (!valueInCache) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'Time to reset password expired',
+        message: 'Thay đổi mật khẩu không thành công do thời gian đã hết hạn',
       });
     }
     const user = await this.prisma.user.findFirst({
@@ -271,14 +298,17 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'User is not exist',
+        message: 'Người dùng không tồn tại',
       });
     }
     const isSame = await this.comparePassword(currentPassword, user.password);
     if (!isSame) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Current password is invalid',
+        message: 'Thay đổi mật khẩu thất bại',
+        errors: {
+          current_password: 'Không đúng',
+        },
       });
     }
     await this.prisma.user.update({
@@ -291,7 +321,7 @@ export class UserService {
     });
     await this.cacheManager.del(user_id);
     return {
-      message: 'Change password successfully',
+      message: 'Thay đổi mật khẩu thành công',
       data: {},
     };
   }
@@ -325,13 +355,19 @@ export class UserService {
     if (isAccessTokenExist) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Access token has not expired',
+        message: 'Làm mới refresh token không thành công',
+        errors: {
+          accessToken: 'Access token vẫn còn hiệu lực',
+        },
       });
     }
     if (!refresh_token) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Refresh token is empty',
+        message: 'Làm mới refresh token không thành công',
+        errors: {
+          refreshToken: 'Refresh token không tồn tại',
+        },
       });
     }
     const session = await this.prisma.session.findFirst({
@@ -343,7 +379,10 @@ export class UserService {
     if (!session) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'Refresh token does not found',
+        message: 'Làm mới refresh token không thành công',
+        errors: {
+          refreshToken: 'Không tìm thấy phiên đăng nhập có chứa refresh token',
+        },
       });
     }
     const value: UserWithLocal = await this.jwtService.verify(refresh_token, {
@@ -352,7 +391,10 @@ export class UserService {
     if (!value) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Refresh token is expired',
+        message: 'Làm mới refresh token không thành công',
+        errors: {
+          refreshToken: 'Refresh token không đúng',
+        },
       });
     }
     const new_access_token = await this.createAccessToken(value);
@@ -371,18 +413,18 @@ export class UserService {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
     return {
-      message: 'Refresh token successfully',
+      message: 'Làm mới refresh token thành công',
       data: {
         accessToken: new_access_token,
       },
     };
   }
 
-  async profiles() {
+  async profilesCustomer() {
     const users = await this.prisma.user.findMany();
   }
 
-  async profilesDetail(
+  async profilesDetailCustomer(
     slug: string,
   ): Promise<SuccessResponse<Omit<user, 'password'>>> {
     const user = await this.prisma.user.findUnique({
@@ -393,18 +435,18 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'User is not exist',
+        message: 'Người dùng không tồn tại',
       });
     }
     return {
-      message: 'Get your profile successfully',
-      data: omit(user, ['password']) as Omit<user, 'password'>,
+      message: 'Lấy thông tin người dùng thất bại',
+      data: omit(user, ['password']),
     };
   }
 
   async profile(
     user_id: string,
-  ): Promise<SuccessResponse<Omit<user, 'password'>>> {
+  ): Promise<SuccessResponse<Omit<user, 'password' | 'created' | 'updated'>>> {
     const user = await this.prisma.user.findUnique({
       where: {
         user_id,
@@ -413,12 +455,15 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'User not found',
+        message: 'Lấy thông tin cá nhân thất bại',
+        errors: {
+          user_id: 'Không tồn tại',
+        },
       });
     }
     return {
-      message: 'Get profile successfully',
-      data: omit(user, ['password']),
+      message: 'Lấy thông tin cá nhân thành công',
+      data: omit(user, ['password', 'created', 'updated']),
     };
   }
 
