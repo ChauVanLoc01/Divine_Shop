@@ -2,12 +2,26 @@ import { Link, useMatch, useNavigate } from 'react-router-dom'
 import Form from '../Form'
 import classNames from 'classnames'
 import { Path } from 'src/App'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from 'src/store'
+import { useState, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from 'src/store'
+import {
+  useClick,
+  useFloating,
+  useInteractions,
+  FloatingPortal,
+  useDismiss,
+  shift,
+  arrow,
+  FloatingArrow
+} from '@floating-ui/react'
+import LinkToTop from '../LinkToTop'
+import { delete_ls } from 'src/utils/slices/user.slice'
 
 function Header() {
   const buy_items = useSelector((state: RootState) => state.ItemsSliceName.cart)
+  const profile = useSelector((state: RootState) => state.UserSliceName.user)
+  const dispatch = useDispatch<AppDispatch>()
   const path = useMatch(Path.viewed)
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate()
@@ -20,6 +34,23 @@ function Header() {
       })
     }
   }
+  // floating ui
+  const arrowRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    middleware: [
+      arrow({
+        element: arrowRef
+      }),
+      shift()
+    ]
+  })
+  const click = useClick(context)
+  const dismiss = useDismiss(context)
+  const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss])
+  // floating ui
   return (
     <div className='text-white'>
       <div className='bg-[#0A59CC] py-2 lg:block hidden'>
@@ -105,7 +136,7 @@ function Header() {
         </div>
       </div>
       <div className='bg-[#2579F2]'>
-        <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm lg:py-3 py-1 lg:space-y-3 space-y-1'>
+        <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm lg:py-3 py-2 lg:space-y-3 space-y-1'>
           <div className='flex justify-between'>
             <Link to={'/'} className='text-3xl font-mono lg:flex hidden items-center space-x-3 hover:cursor-pointer'>
               <span>
@@ -183,39 +214,109 @@ function Header() {
                 </svg>
               </button>
             </form>
-            <div className='md:flex items-center space-x-2 hidden'>
-              <Form
-                isLogin={true}
-                buttonClass='group transition-all duration-200 flex items-center space-x-2'
-                content={
-                  <>
-                    <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth={1.5}
-                        stroke='currentColor'
-                        className='w-6 h-6'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
-                        />
-                      </svg>
-                    </span>
-                    <span>Đăng nhập</span>
-                  </>
-                }
-              />
-              <span>/</span>
-              <Form isLogin={false} content='Đăng kí' />
-            </div>
+            {profile ? (
+              <button
+                onMouseOver={() => setIsOpen(true)}
+                ref={refs.setReference}
+                {...getReferenceProps()}
+                className='md:flex hidden text-center items-center lg:space-x-3 md:space-x-2 truncate max-w-[185px]'
+              >
+                {profile.avatar ? (
+                  <span className='w-9 h-9 flex-shrink-0 rounded-full overflow-hidden'>
+                    <img className='object-cover' src={profile.avatar} alt='avatar' />
+                  </span>
+                ) : (
+                  <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='w-5 h-5'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
+                      />
+                    </svg>
+                  </span>
+                )}
+                <span className='truncate'>{profile.name}</span>
+              </button>
+            ) : (
+              <div className='md:flex items-center justify-center space-x-2 hidden'>
+                <Form
+                  isLogin={true}
+                  buttonClass='group transition-all duration-200 flex items-center space-x-2'
+                  content={
+                    <>
+                      <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          strokeWidth={1.5}
+                          stroke='currentColor'
+                          className='w-6 h-6'
+                        >
+                          <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
+                          />
+                        </svg>
+                      </span>
+                      <span>Đăng nhập</span>
+                    </>
+                  }
+                />
+                <span>/</span>
+                <Form isLogin={false} content='Đăng kí' />
+              </div>
+            )}
+            {isOpen && (
+              <FloatingPortal>
+                <div
+                  onPointerLeave={() => setIsOpen(false)}
+                  ref={refs.setFloating}
+                  style={floatingStyles}
+                  {...getFloatingProps()}
+                  className='w-fit rounded-md shadow-xl flex flex-col bg-white text-gray-700 p-3 z-40 relative'
+                >
+                  <FloatingArrow className='w-4 h-4 fill-white' ref={arrowRef} context={context} />
+                  <LinkToTop
+                    to={`/${Path.user}/${Path.profile}`}
+                    className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
+                  >
+                    Quản lý tài khoản
+                  </LinkToTop>
+                  <LinkToTop
+                    to={`/${Path.user}/${Path.history}`}
+                    className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
+                  >
+                    Lịch sử đơn hàng
+                  </LinkToTop>
+                  <LinkToTop
+                    to={`/${Path.user}/${Path.favorate}`}
+                    className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
+                  >
+                    Sản phẩm yêu thích
+                  </LinkToTop>
+                  <button
+                    onClick={() => dispatch(delete_ls(['access_token', 'user']))}
+                    className='pl-3 pr-9 text-left py-2 rounded-md hover:bg-gray-100'
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              </FloatingPortal>
+            )}
             <div className='p-2'>
               <button
                 onClick={() => navigate(`${Path.cart}`)}
-                className='flex items-center space-x-2 py-1 px-2  lg:p-2 border-[1px] hover:bg-[#2985FF] transition-all duration-200 border-white rounded-md'
+                className='flex items-center space-x-2 py-2 px-2  lg:p-2 border-[1px] hover:bg-[#2985FF] transition-all duration-200 border-white rounded-md'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -231,7 +332,7 @@ function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                   />
                 </svg>
-                <span className='md:block hidden'>Giỏ hàng</span>
+                <span className='lg:block hidden'>Giỏ hàng</span>
                 <span className='text-gray-600 bg-white rounded-md px-1 w-7'>
                   {buy_items.length > 9 ? '9+' : buy_items.length}
                 </span>

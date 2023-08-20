@@ -1,20 +1,27 @@
+import { useState, useEffect } from 'react'
 import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify'
 import classNames from 'classnames'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginSchemaType, login_schema } from 'src/utils/schemas/login.schema'
-import { useLoginMutation } from 'src/utils/apis/user.api'
-import { toast } from 'react-toastify'
-import { isCommonError } from 'src/utils/check-error'
+import { useLoginMutation, useProfileQuery } from 'src/utils/apis/user.api'
+import { isCommonError, isValidationError } from 'src/utils/check-error'
+import { ValidationFailResponse } from 'src/Types/responses.type'
+import { WorkingWithLocalStorage as ls } from 'src/utils/local-storage'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
+import { save_access_token, save_user, setIsOpen } from 'src/utils/slices/user.slice'
 
 type LoginProps = {
   jump: boolean
   setJump: React.Dispatch<React.SetStateAction<boolean>>
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function Login({ jump, setJump, setIsOpen }: LoginProps) {
-  const [login, { error }] = useLoginMutation()
+function Login({ jump, setJump }: LoginProps) {
+  const dispatch = useDispatch<AppDispatch>()
+  const [errsForm, setErrsForm] = useState<Partial<LoginSchemaType>>({})
+  const [login, { isLoading }] = useLoginMutation()
   const {
     register,
     formState: { errors },
@@ -22,11 +29,36 @@ function Login({ jump, setJump, setIsOpen }: LoginProps) {
   } = useForm<LoginSchemaType>({
     resolver: yupResolver(login_schema)
   })
+  const { data, refetch } = useProfileQuery(undefined, { skip: !ls.get('access_token') })
   const onSubmit = async (data: LoginSchemaType) => {
     try {
-      await login(data).unwrap()
+      const result = await login(data).unwrap()
+      dispatch(save_access_token(result.data.accessToken))
+      toast.success('Đăng nhập thành công', {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored'
+      })
     } catch (error) {
-      console.log(error)
+      if (isValidationError(error)) {
+        const errs_data = error.data as ValidationFailResponse<Partial<LoginSchemaType>>
+        setErrsForm(errs_data.errors)
+        toast.error('Đăng nhập thất bại', {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'colored'
+        })
+      }
       if (isCommonError(error)) {
         toast.error(error.message, {
           position: 'top-right',
@@ -38,28 +70,38 @@ function Login({ jump, setJump, setIsOpen }: LoginProps) {
           progress: undefined,
           theme: 'colored'
         })
-        console.log('object')
       }
     }
   }
+  useEffect(() => {
+    if (ls.get('access_token') && !data) {
+      refetch()
+    }
+    if (data) {
+      dispatch(save_user(data.data))
+      dispatch(setIsOpen(false))
+    }
+  }, [ls.get('access_token'), data])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-3 xl:space-y-4 md:static relative'>
       <div className='text-2xl font-semibold space-x-4'>
         <button
           type='button'
-          className={classNames('hover:underline hover:decoration-2', {
-            'text-gray-500': !jump
+          className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
+            'text-gray-500 underline': !jump,
+            'underline underline-offset-4': jump
           })}
-          onClick={() => setJump(!jump)}
+          onClick={() => setJump(true)}
         >
           Đăng nhập
         </button>
         <button
           type='button'
-          className={classNames('hover:underline hover:decoration-2', {
-            'text-gray-500': jump
+          className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
+            'text-gray-500': jump,
+            'underline underline-offset-4': !jump
           })}
-          onClick={() => setJump(!jump)}
+          onClick={() => setJump(false)}
         >
           Đăng kí
         </button>
@@ -68,17 +110,18 @@ function Login({ jump, setJump, setIsOpen }: LoginProps) {
       <div className='relative'>
         <label
           className={classNames('text-gray-400 flex items-center absolute top-0 left-3 xl:text-sm text-xs', {
-            'text-red-500': errors.email
+            'text-red-500': errors.email || errsForm.email
           })}
           htmlFor='email'
         >
           Email {errors.email?.message}
+          {errsForm.email}
         </label>
         <input
           className={classNames(
             'w-full hover:ring-2 focus:ring-2 ring-[#2579F2] bg-[#E8F0FE] border rounded-md px-3 pt-4 xl:pt-5 pb-1 outline-none',
             {
-              'ring-transparent border-red-500': errors.email
+              'ring-transparent border-red-500': errors.email || errsForm.email
             }
           )}
           type='text'
@@ -89,17 +132,18 @@ function Login({ jump, setJump, setIsOpen }: LoginProps) {
       <div className='relative'>
         <label
           className={classNames('text-gray-400 flex items-center absolute top-0 left-3 xl:text-sm text-xs', {
-            'text-red-500': errors.password
+            'text-red-500': errors.password || errsForm.password
           })}
           htmlFor='password'
         >
           Mật khẩu {errors.password?.message}
+          {errsForm.password}
         </label>
         <input
           className={classNames(
             'w-full hover:ring-2 focus:ring-2 ring-[#2579F2] bg-[#E8F0FE] border rounded-md px-3 pt-4 xl:pt-5 pb-1 outline-none',
             {
-              'ring-transparent border-red-500': errors.password
+              'ring-transparent border-red-500': errors.password || errsForm.password
             }
           )}
           type='text'
@@ -111,14 +155,20 @@ function Login({ jump, setJump, setIsOpen }: LoginProps) {
         <a href=''>Bạn quên mật khẩu?</a>
       </div>
       <div>
-        <button
-          onClick={handleSubmit(onSubmit)}
-          className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white hover:bg-[#2579F2]/90 hover:scale-[1.01]'
-        >
-          Đăng nhập
-        </button>
+        {isLoading ? (
+          <div className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white text-center cursor-pointer hover:bg-[#2579F2]/90'>
+            Đăng nhập
+          </div>
+        ) : (
+          <button
+            type='submit'
+            className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white hover:bg-[#2579F2]/90'
+          >
+            Đăng nhập
+          </button>
+        )}
       </div>
-      <button className='absolute -top-5 -right-2 md:hidden' onClick={() => setIsOpen(false)}>
+      <button type='button' className='absolute -top-5 -right-2 md:hidden' onClick={() => dispatch(setIsOpen(false))}>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'

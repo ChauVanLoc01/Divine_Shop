@@ -1,20 +1,30 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import ProductInCart from './ProductInCart'
 import { AppDispatch, RootState } from 'src/store'
-import { format_currency } from 'src/utils/utils'
 import { useGetItemListQuery } from 'src/utils/apis/items.api'
 import { updateItemsFromCart } from 'src/utils/slices/items.slice'
+import SkeletonInCart from './SkeletonInCart/SkeletonInCart'
+import Bill from './Bill'
+import SkeletonBill from './SkeletonBill'
+import LinkToTop from 'src/Components/LinkToTop'
+import { Path } from 'src/App'
 
 function Cart() {
   const dispatch = useDispatch<AppDispatch>()
   const items_in_cart = useSelector((state: RootState) => state.ItemsSliceName.cart)
-  const { data } = useGetItemListQuery({
-    many: items_in_cart.map((e) => e.item_id).join(',')
-  })
-  if (!data) {
-    return <div>alo</div>
-  }
-  // dispatch(updateItemsFromCart(data.data.items))
+  const { data } = useGetItemListQuery(
+    {
+      many: items_in_cart.map((e) => e.item_id).join(',')
+    },
+    { skip: items_in_cart.length === 0 }
+  )
+  useEffect(() => {
+    if (data) {
+      dispatch(updateItemsFromCart(data.data.items))
+    }
+  }, [data])
+
   return (
     <div className='bg-[#F3F4F6] md:p-5 p-2 xl:py-5'>
       <div className='xl:max-w-5xl xl:mx-auto md:text-base text-sm md:px-5 px-2 pb-2 md:pb-5 bg-white rounded-md space-y-5'>
@@ -22,53 +32,26 @@ function Cart() {
           <span className='text-2xl font-semibold xl:text-3xl'>Giỏ hàng</span>
           <span>({items_in_cart.length} sản phẩm)</span>
         </div>
-        <div className='bg-white flex lg:flex-row flex-col rounded-md lg:space-y-0 space-y-4 lg:space-x-5'>
-          <div className='basis-4/6 xl:basis-3/5 space-y-4 md:space-y-7'>
-            {items_in_cart.map((e) => (
-              <ProductInCart item={e} key={e.item_id} />
-            ))}
-          </div>
-          <div className='basis-2/6 xl:basis-2/5 bottom-0 bg-white lg:bg-none lg:py-0 py-5 lg:border-none border-t border-gray-200 ring-gray-300'>
-            <div className='lg:border-l sticky lg:top-10 lg:border-l-gray-300 px-2 md:px-5 space-y-2 lg:space-y-3'>
-              <div className='text-lg md:text-xl font-medium'>Thanh toán</div>
-              <div className='flex justify-between'>
-                <span>Tổng giá trị đơn hàng</span>
-                <span>
-                  {format_currency(
-                    items_in_cart.reduce((acc, cur) => {
-                      return acc + cur.buy_amount * cur.priceBeforeDiscount
-                    }, 0)
-                  )}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span>Số tiền giảm giá</span>
-                <span>
-                  {format_currency(
-                    items_in_cart.reduce((acc, cur) => {
-                      return acc + cur.buy_amount * (cur.priceBeforeDiscount - cur.price)
-                    }, 0)
-                  )}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className=''>Tổng tiền phải trả</span>
-                <span className='font-medium text-xl md:text-lg text-red-600'>
-                  {format_currency(
-                    items_in_cart.reduce((acc, cur) => {
-                      return acc + cur.buy_amount * cur.price
-                    }, 0)
-                  )}
-                </span>
-              </div>
-              <div className='flex justify-end'>
-                <button className='px-5 w-full hover:bg-[#2579F2]/90 py-2 bg-[#2579F2] text-white rounded-md'>
-                  Thanh toán
-                </button>
-              </div>
+        {items_in_cart.length > 0 ? (
+          <div className='bg-white flex lg:flex-row flex-col rounded-md lg:space-y-0 space-y-4 lg:space-x-5'>
+            <div className='lg:basis-1/2 xl:basis-3/5 space-y-4 md:space-y-7'>
+              {data
+                ? items_in_cart.map((e) => <ProductInCart item={e} key={e.item_id} />)
+                : items_in_cart.map((e) => <SkeletonInCart key={e.item_id} />)}
             </div>
+            {data ? <Bill items_in_cart={items_in_cart} /> : <SkeletonBill />}
           </div>
-        </div>
+        ) : (
+          <div className='bg-white flex flex-col items-center py-3 space-y-3'>
+            <img src={'https://cdn.divineshop.vn/static/4e0db8ffb1e9cac7c7bc91d497753a2c.svg'} alt='empty-image' />
+            <LinkToTop
+              to={`/${Path.search}`}
+              className='px-5 py-2 hover:text-white hover:bg-[#2579F2] hover:duration-200 hover:ease-linear ring-1 ring-[#2579F2] text-[#2579F2] rounded-md'
+            >
+              Mua hàng ngay
+            </LinkToTop>
+          </div>
+        )}
       </div>
     </div>
   )

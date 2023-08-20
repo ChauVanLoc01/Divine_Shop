@@ -20,11 +20,11 @@ function ProductInCart({ item }: ProductInCartProps) {
     )
   }
   return (
-    <div className='flex md:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3'>
-      <LinkToTop to={`/${createSlug(item.item_name, item.item_id)}`} className='basis-1/3 overflow-hidden'>
+    <div className='flex xl:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3'>
+      <LinkToTop to={`/${createSlug(item.item_name, item.item_id)}`} className='xl:basis-1/3 overflow-hidden'>
         <img className='w-full bg-cover rounded-md' src={item.image} alt='picture' />
       </LinkToTop>
-      <div className='basis-2/3 space-y-3 divide-y divide-gray-200'>
+      <div className='xl:basis-2/3 space-y-3 divide-y divide-gray-200'>
         <div className='space-y-3'>
           <div>
             <LinkToTop

@@ -70,7 +70,7 @@ export class UserService {
 
   async createAccessToken(user: UserWithLocal): Promise<string> {
     return (
-      'Beaer ' +
+      'Bearer ' +
       (await this.jwtService.signAsync(user, {
         expiresIn: 1000 * 60 * 60 * 8,
       }))
@@ -79,7 +79,7 @@ export class UserService {
 
   async createRefreshToken(user: UserWithLocal): Promise<string> {
     return (
-      'Beaer ' +
+      'Bearer ' +
       (await this.jwtService.signAsync(user, {
         expiresIn: 1000 * 60 * 60 * 24 * 7,
         secret: process.env.SECRET_REFRESH_TOKEN,

@@ -1,0 +1,20 @@
+type Key = 'user' | 'item_in_cart' | 'access_token'
+
+export const WorkingWithLocalStorage = {
+  save(key: Key, value: string) {
+    localStorage.setItem(key, value)
+  },
+  get(key: Key) {
+    return localStorage.getItem(key)
+  },
+  delete(key: Key) {
+    localStorage.removeItem(key)
+  },
+  update(key: Key, value: string) {
+    this.delete(key)
+    this.save(key, value)
+  },
+  clearAll() {
+    localStorage.clear()
+  }
+}

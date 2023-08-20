@@ -1,6 +1,6 @@
 import Footer from './Components/Footer'
 import Header from './Components/Header'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import ProductList from './pages/ProductList'
 import ProductDetail from './pages/ProductDetail'
@@ -14,6 +14,8 @@ import OrderDetail from './pages/User/OrderHistory/OrderDetail'
 import Cart from './pages/Cart'
 import Viewed from './pages/View'
 import { ToastContainer } from 'react-toastify'
+import { useSelector } from 'react-redux'
+import { RootState } from './store'
 
 export enum Path {
   search = 'search',
@@ -27,33 +29,42 @@ export enum Path {
   viewed = 'viewed'
 }
 
+const PrivateRoute = () => {
+  const user = useSelector((state: RootState) => state.UserSliceName.user)
+  return user ? <Outlet /> : <Navigate to={'/'} />
+}
+
 function App() {
   return (
-    <div>
-      <Header />
-      <div>
-        <Routes>
-          <Route path='/'>
-            <Route index element={<Home />} />
-            <Route path={Path.search} element={<ProductList />} />
-            <Route path={Path.user} element={<User />}>
-              <Route path={Path.profile} element={<Profile />} />
-              <Route path={Path.password} element={<Password />} />
-              <Route path={Path.history} element={<OrderHistory />}>
-                <Route path=':orderId' element={<OrderDetail />} />
+    <>
+      <div className='overflow-hidden'>
+        <Header />
+        <div>
+          <Routes>
+            <Route path='/'>
+              <Route index element={<Home />} />
+              <Route path={Path.search} element={<ProductList />} />
+              <Route path=':productId' element={<ProductDetail />} />
+              <Route path={Path.viewed} element={<Viewed />} />
+              <Route path={Path.cart} element={<Cart />} />
+              <Route path='' element={<PrivateRoute />}>
+                <Route path={Path.user} element={<User />}>
+                  <Route path={Path.profile} element={<Profile />} />
+                  <Route path={Path.password} element={<Password />} />
+                  <Route path={Path.history} element={<OrderHistory />}>
+                    <Route path=':orderId' element={<OrderDetail />} />
+                  </Route>
+                  <Route path={Path.favorate} element={<FavorateProduct />} />
+                  <Route path={Path.my_cmt} element={<MyCmt />} />
+                </Route>
               </Route>
-              <Route path={Path.favorate} element={<FavorateProduct />} />
-              <Route path={Path.my_cmt} element={<MyCmt />} />
             </Route>
-            <Route path={Path.cart} element={<Cart />} />
-            <Route path={Path.viewed} element={<Viewed />} />
-            <Route path=':productId' element={<ProductDetail />} />
-          </Route>
-        </Routes>
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
       <ToastContainer />
-    </div>
+    </>
   )
 }
 

@@ -1,12 +1,23 @@
-import { Outlet } from 'react-router-dom'
+import classNames from 'classnames'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Path } from 'src/App'
 
 function User() {
+  const location = useLocation()
   return (
     <div className='bg-[#F3F4F6]'>
       <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm py-2 md:py-4 md:space-y-4 space-y-2'>
-        <div className='overflow-x-scroll p-1 lg:w-fit hide-scroll-bar bg-white rounded-lg'>
+        <div className='overflow-x-scroll p-1 lg:w-fit hide-scroll-bar rounded-md bg-white'>
           <div className='flex'>
-            <button className='px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-md visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
+            <Link
+              to={`/${Path.user}/${Path.profile}`}
+              className={classNames(
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-md hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                {
+                  'bg-gray-100': location.pathname.includes(Path.profile)
+                }
+              )}
+            >
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -24,8 +35,16 @@ function User() {
                 </svg>
               </span>
               <span>Tài khoản</span>
-            </button>
-            <button className='px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
+            </Link>
+            <Link
+              to={`/${Path.user}/${Path.password}`}
+              className={classNames(
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                {
+                  'bg-gray-100': location.pathname.includes(Path.password)
+                }
+              )}
+            >
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -43,8 +62,16 @@ function User() {
                 </svg>
               </span>
               <span>Mật khẩu</span>
-            </button>
-            <button className='px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
+            </Link>
+            <Link
+              to={`/${Path.user}/${Path.history}`}
+              className={classNames(
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                {
+                  'bg-gray-100': location.pathname.includes(Path.history)
+                }
+              )}
+            >
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -62,8 +89,16 @@ function User() {
                 </svg>
               </span>
               <span>Lịch sử đơn hàng</span>
-            </button>
-            <button className='px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
+            </Link>
+            <Link
+              to={`/${Path.user}/${Path.favorate}`}
+              className={classNames(
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                {
+                  'bg-gray-100': location.pathname.includes(Path.favorate)
+                }
+              )}
+            >
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -81,8 +116,16 @@ function User() {
                 </svg>
               </span>
               <span>Sản phẩm yêu thích</span>
-            </button>
-            <button className='px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg visited:bg-[#2579F2] hover:bg-[#2579F2]/20 duration-100 transition-all ease-linear flex items-center space-x-2'>
+            </Link>
+            <Link
+              to={`/${Path.user}/${Path.my_cmt}`}
+              className={classNames(
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                {
+                  'bg-gray-100': location.pathname.includes(Path.my_cmt)
+                }
+              )}
+            >
               <span>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -100,7 +143,7 @@ function User() {
                 </svg>
               </span>
               <span>Bình luận của tôi</span>
-            </button>
+            </Link>
           </div>
         </div>
         <Outlet />

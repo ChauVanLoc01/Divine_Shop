@@ -1,6 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
 import { Item } from 'src/Types/items.type'
+import { WorkingWithLocalStorage as ls } from '../local-storage'
+import { WorkingWithSessionStorage as ss } from '../session-storage'
 
 export type BuyItem = Item & {
   buy_amount: number
@@ -12,8 +14,8 @@ type ItemSlice = {
 }
 
 const initialState: ItemSlice = {
-  viewed: [],
-  cart: []
+  viewed: ss.get('viewed') ? JSON.parse(ss.get('viewed') as string) : [],
+  cart: ls.get('item_in_cart') ? JSON.parse(ls.get('item_in_cart') as string) : []
 }
 
 const itemsSlice = createSlice({
@@ -25,6 +27,7 @@ const itemsSlice = createSlice({
       if (!item) {
         state.viewed.push(action.payload)
       }
+      ss.update('viewed', JSON.stringify(state.viewed))
     },
     addItemsIntoCart: (state, action: PayloadAction<BuyItem & { replace?: boolean }>) => {
       const index = state.cart.findIndex((e) => e.item_id === action.payload.item_id)
@@ -37,6 +40,7 @@ const itemsSlice = createSlice({
           state.cart[index].buy_amount += action.payload.buy_amount
         }
       }
+      ls.update('item_in_cart', JSON.stringify(state.cart))
     },
     deleteItemsFromCart: (state, action: PayloadAction<{ item_id: string; amount: number }>) => {
       const index = state.cart.findIndex((e) => e.item_id === action.payload.item_id)
@@ -44,16 +48,13 @@ const itemsSlice = createSlice({
       if (state.cart[index].buy_amount === 0) {
         state.cart.splice(index, 1)
       }
+      ls.update('item_in_cart', JSON.stringify(state.cart))
     },
     updateItemsFromCart: (state, action: PayloadAction<Item[]>) => {
-      const updatedCart = state.cart.map((e) => {
-        const new_data = action.payload.find((n) => n.item_id === e.item_id)
-        if (new_data) {
-          return { ...new_data, buy_amount: e.buy_amount }
-        }
-        return e
+      state.cart.forEach((e) => {
+        const found = action.payload.find((n) => n.item_id === e.item_id)
+        return found ? { ...found, buy_amount: e.buy_amount } : e
       })
-      state.cart = updatedCart
     }
   }
 })

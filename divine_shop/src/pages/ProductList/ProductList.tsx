@@ -60,7 +60,7 @@ function ProductList() {
   return (
     <div className='space-y-4 bg-[#F3F4F6] lg:py-4'>
       <Sort setQuery={setQuery} />
-      <Paging products={data?.data.items} />
+      {data ? <Paging products={data?.data.items} /> : <Paging />}
     </div>
   )
 }
