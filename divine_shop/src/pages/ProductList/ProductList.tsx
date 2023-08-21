@@ -1,5 +1,5 @@
 import Paging from 'src/Components/Paging'
-import Sort from './Sort'
+// import Sort from './Sort'
 import { useSearchParams } from 'react-router-dom'
 import { ItemCategoryEnum, ItemQuery, OrderEnum } from 'src/Types/items.type'
 import { isUndefined, omitBy } from 'lodash'
@@ -55,11 +55,11 @@ function ProductList() {
       isUndefined
     )
   }
-  const [query, setQuery] = useState<ItemQuery>(searchs)
+  const [query, _] = useState<ItemQuery>(searchs)
   const { data } = useGetItemListQuery(query)
   return (
     <div className='space-y-4 bg-[#F3F4F6] lg:py-4'>
-      <Sort setQuery={setQuery} />
+      {/* <Sort setQuery={setQuery} /> */}
       {data ? <Paging products={data?.data.items} /> : <Paging />}
     </div>
   )

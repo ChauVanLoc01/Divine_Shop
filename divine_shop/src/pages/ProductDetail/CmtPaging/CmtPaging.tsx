@@ -1,8 +1,8 @@
 import Cmt from '../Cmt'
 
-type CmtPagingProps = {
-  cmts: []
-}
+// type CmtPagingProps = {
+//   cmts: []
+// }
 
 function CmtPaging() {
   return (
