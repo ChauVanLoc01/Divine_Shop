@@ -4,11 +4,12 @@ import { LoginSchemaType } from '../schemas/login.schema'
 import { Route } from 'src/constants/route.constant'
 import { RegisterSchemaType } from '../schemas/register.schema'
 import { WorkingWithLocalStorage } from '../local-storage'
+import { baseUrl } from 'src/constants/base-url.constant'
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASEURL,
+    baseUrl,
     prepareHeaders: (headers, { endpoint }) => {
       if ([Route.logout, Route.my_profile, Route.change_password].includes(endpoint)) {
         headers.set(
