@@ -9,7 +9,7 @@ import { usePrefetch } from 'src/utils/apis/items.api'
 import { setIsOpen } from 'src/utils/slices/user.slice'
 
 function Draw() {
-  const [openDraw, setOpenDraw] = useState(true)
+  const [openDraw, setOpenDraw] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
   const profile = useSelector((state: RootState) => state.UserSliceName.user)
   const openForm = useSelector((state: RootState) => state.UserSliceName.isOpen)
@@ -34,7 +34,7 @@ function Draw() {
 
   return (
     <>
-      <button className='flex justify-center items-center lg:hidden' onClick={() => setOpenDraw(true)}>
+      <button className='flex items-center text-left -ml-1 lg:hidden' onClick={() => setOpenDraw(true)}>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
