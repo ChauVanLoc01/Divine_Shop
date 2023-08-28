@@ -12,10 +12,7 @@ export enum ItemCategoryEnum {
   google_play_itune = 'google_play_itune'
 }
 
-export enum OrderEnum {
-  asc = 'asc',
-  desc = 'desc'
-}
+export type OrderKey = 'asc' | 'desc'
 
 export type Item = {
   item_id: string
@@ -37,10 +34,10 @@ export type ItemQuery = {
   category?: ItemCategoryEnum
   price_min?: number
   price_max?: number
-  order_by_created?: OrderEnum
-  order_by_item_name?: OrderEnum
-  order_by_price?: OrderEnum
-  order_by_sold?: OrderEnum
+  order_by_created?: OrderKey
+  order_by_item_name?: OrderKey
+  order_by_price?: OrderKey
+  order_by_sold?: OrderKey
   limit?: number
   page?: number
 }

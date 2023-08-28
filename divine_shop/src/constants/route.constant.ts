@@ -6,10 +6,16 @@ export const Route = {
   // user
   my_profile: 'profile',
   google: 'google',
-  forgot_password: 'password/forgot/',
+  forgot_password: 'password/forgot',
   change_password: 'password/change',
   reset_token: 'reset-token',
 
   //item
-  items: 'items'
+  items: 'items',
+
+  //order
+  orders: 'orders',
+
+  //favorate-item
+  favorates: 'favorates'
 }

@@ -2,17 +2,30 @@ import Paging from 'src/Components/Paging'
 import Category from './Category'
 import Banner from './Banner'
 import { useGetItemListQuery } from 'src/utils/apis/items.api'
-import { ItemCategoryEnum, OrderEnum } from 'src/Types/items.type'
+import { ItemCategoryEnum } from 'src/Types/items.type'
+import LinkToTop from 'src/Components/LinkToTop'
 
 function Home() {
-  const { data: data_game_stream } = useGetItemListQuery({
+  const {
+    data: data_game_stream,
+    isError: isErrGameSteam,
+    isFetching: isFetchingGameStema
+  } = useGetItemListQuery({
     category: ItemCategoryEnum.game_steam
   })
-  const { data: data_new } = useGetItemListQuery({
-    order_by_created: OrderEnum.desc
+  const {
+    data: data_new,
+    isError: isErrNew,
+    isFetching: isFetchingNew
+  } = useGetItemListQuery({
+    order_by_created: 'desc'
   })
-  const { data: data_best_sold } = useGetItemListQuery({
-    order_by_sold: OrderEnum.desc
+  const {
+    data: data_best_sold,
+    isError: isErrBestSold,
+    isFetching: isFetchingBestSold
+  } = useGetItemListQuery({
+    order_by_sold: 'desc'
   })
   return (
     <div className='bg-[#F3F4F6] lg:py-4 space-y-8'>
@@ -73,19 +86,57 @@ function Home() {
         title='Sản phẩm mới'
         desc='Danh sách những sản phẩm theo xu hướng mà có thể bạn sẽ thích'
         hasButton={true}
-        content={<Paging products={data_new?.data.items} page_size={data_best_sold?.data.query.page_size} />}
+        content={
+          <Paging
+            products={data_new?.data.items}
+            page_size={data_best_sold?.data.query.page_size}
+            isFetching={isFetchingNew}
+            isError={isErrNew}
+          />
+        }
+        to={'/search?order_by_created=desc'}
       />
       <Banner
         title='Từ khóa nổi bật'
         hasButton={false}
         content={
           <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2'>
-            <button className='bg-[#3D5A80] lg:py-5 py-3 rounded-lg text-white font-semibold'>Làm việc</button>
-            <button className='bg-[#98C1D9] lg:py-5 py-3 rounded-lg text-white font-semibold'>Giải trí</button>
-            <button className='bg-[#EE6C4D] lg:py-5 py-3 rounded-lg text-white font-semibold'>Học tập</button>
-            <button className='bg-[#293241] lg:py-5 py-3 rounded-lg text-white font-semibold'>Spotify</button>
-            <button className='bg-[#545B67] lg:py-5 py-3 rounded-lg text-white font-semibold'>Wallet</button>
-            <button className='bg-[#767C85] lg:py-5 py-3 rounded-lg text-white font-semibold'>Youtube</button>
+            <LinkToTop
+              to={'/search?category=work'}
+              className='bg-[#3D5A80] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Làm việc
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?category=entertainment'}
+              className='bg-[#98C1D9] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Giải trí
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?category=learn'}
+              className='bg-[#EE6C4D] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Học tập
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?item_name=Spotify'}
+              className='bg-[#293241] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Spotify
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?item_name=Wallet'}
+              className='bg-[#545B67] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Wallet
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?item_name=Youtube'}
+              className='bg-[#767C85] lg:py-5 py-3 rounded-lg text-white font-semibold text-center'
+            >
+              Youtube
+            </LinkToTop>
           </div>
         }
       />
@@ -117,29 +168,70 @@ function Home() {
             products={data_best_sold?.data.items}
             page_size={data_best_sold?.data.query.page_size}
             bgColor='bg-[#000D21]'
+            isError={isErrBestSold}
+            isFetching={isFetchingBestSold}
           />
         }
         hasButton={true}
+        to={'/search?order_by_sold=desc'}
       />
       <Banner
         title='Giá phù hợp'
         hasButton={false}
         content={
           <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-4 md:text-base text-sm grid md:grid-cols-6 grid-cols-3 lg:gap-4 md:gap-3 gap-2 font-semibold text-gray-600'>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>20.000đ</button>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>50.000đ</button>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>100.000đ</button>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>200.000đ</button>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>500.000đ</button>
-            <button className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg'>1.000.000đ</button>
+            <LinkToTop
+              to={'/search?price_max=20000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              20.000đ
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?price_max=50000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              50.000đ
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?price_max=100000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              100.000đ
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?price_max=200000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              200.000đ
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?price_max=500000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              500.000đ
+            </LinkToTop>
+            <LinkToTop
+              to={'/search?price_max=1000000'}
+              className='bg-white border-[1px] border-gray-200 lg:py-5 py-3 rounded-lg text-center'
+            >
+              1.000.000đ
+            </LinkToTop>
           </div>
         }
       />
       <Banner
         title='Game trên Steam'
         hasButton={true}
+        to={'/search?category=game_steam'}
         desc='Những trò chơi được đánh giá tốt, nội dung hấp dẫn thu hút đang chờ bạn'
-        content={<Paging products={data_game_stream?.data.items} page_size={data_game_stream?.data.query.page_size} />}
+        content={
+          <Paging
+            products={data_game_stream?.data.items}
+            page_size={data_game_stream?.data.query.page_size}
+            isError={isErrGameSteam}
+            isFetching={isFetchingGameStema}
+          />
+        }
       />
     </div>
   )

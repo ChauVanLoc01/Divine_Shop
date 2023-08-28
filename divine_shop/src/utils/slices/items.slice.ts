@@ -55,11 +55,47 @@ const itemsSlice = createSlice({
         const found = action.payload.find((n) => n.item_id === e.item_id)
         return found ? { ...found, buy_amount: e.buy_amount } : e
       })
+    },
+    resetItemInCart: (
+      state,
+      action: PayloadAction<
+        {
+          item_id: string
+          buy_amount: number
+        }[]
+      >
+    ) => {
+      action.payload.forEach((e) => {
+        const index = state.cart.findIndex((ic) => ic.item_id === e.item_id)
+        state.cart.splice(index, 1)
+      })
+      ls.set('item_in_cart', JSON.stringify(state.cart))
+    },
+    buyAgain: (state, action: PayloadAction<(BuyItem & { replace?: boolean })[]>) => {
+      const result = action.payload.map((e) => {
+        const found = state.cart.find((a) => a.item_id === e.item_id)
+        if (found) {
+          return {
+            ...found,
+            buy_amount: e.buy_amount + found.buy_amount
+          }
+        }
+        return e
+      })
+      state.cart = [...state.cart, ...result]
+      ls.update('item_in_cart', JSON.stringify(state.cart))
     }
   }
 })
 
-export const { addItemsIntoView, addItemsIntoCart, deleteItemsFromCart, updateItemsFromCart } = itemsSlice.actions
+export const {
+  addItemsIntoView,
+  addItemsIntoCart,
+  deleteItemsFromCart,
+  updateItemsFromCart,
+  resetItemInCart,
+  buyAgain
+} = itemsSlice.actions
 
 export const ItemsSlice = itemsSlice.reducer
 

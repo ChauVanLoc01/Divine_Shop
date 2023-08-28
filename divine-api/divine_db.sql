@@ -1,16 +1,26 @@
 DROP TABLE IF EXISTS `cmt`;
 CREATE TABLE `cmt` (
-  `cmt_id` int NOT NULL AUTO_INCREMENT,
+  `cmt_id` varchar(50) NOT NULL primary key,
   `content` text NOT NULL,
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp DEFAULT NULL,
-  `user_id` varchar(50) NOT NULL,
+  `user_id` varchar(50),
+  `email` varchar(100) not null,
   `item_id` varchar(50) NOT NULL,
-  PRIMARY KEY (`cmt_id`),
-  KEY `user_id` (`user_id`),
-  KEY `item_id` (`item_id`),
-  CONSTRAINT `cmt_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `cmt_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`)
+  `references_cmt_id` varchar(50) default null,
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
+  FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`),
+  foreign key(references_cmt_id) references cmt(cmt_id)
+);
+
+create table favorate_item (
+	item_id varchar(50) not null,
+    user_id varchar(50) not null,
+    receive_email boolean default true,
+    created timestamp default current_timestamp,
+    primary key (item_id, user_id),
+    foreign key (item_id) references item(item_id),
+    foreign key (user_id) references user(user_id)
 );
 
 

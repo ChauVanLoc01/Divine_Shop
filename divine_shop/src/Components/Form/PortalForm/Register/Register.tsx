@@ -9,18 +9,14 @@ import { useProfileQuery, useRegisterMutation } from 'src/utils/apis/user.api'
 import { isCommonError, isValidationError } from 'src/utils/check-error'
 import { RegisterSchemaType, register_schema } from 'src/utils/schemas/register.schema'
 import { v4 as uuidv4 } from 'uuid'
-import { ValidationFailResponse } from 'src/Types/responses.type'
+import { FailResponse, ValidationFailResponse } from 'src/Types/responses.type'
 import { WorkingWithLocalStorage } from 'src/utils/local-storage'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'src/store'
 import { save_access_token, save_user, setIsOpen } from 'src/utils/slices/user.slice'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from 'src/store'
 
-type RegisterProps = {
-  jump: boolean
-  setJump: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-function Register({ jump, setJump }: RegisterProps) {
+function Register() {
+  const isOpen = useSelector((state: RootState) => state.UserSliceName.isOpen)
   const dispatch = useDispatch<AppDispatch>()
   const [errsForm, setErrsForm] = useState<Partial<Omit<RegisterSchemaType, 'confirm_password'>>>({})
   const {
@@ -53,19 +49,9 @@ function Register({ jump, setJump }: RegisterProps) {
       if (isValidationError(error)) {
         const errs_data = error.data as ValidationFailResponse<Partial<Omit<RegisterSchemaType, 'confirm_password'>>>
         setErrsForm(errs_data.errors)
-        toast.error(errs_data.message, {
-          position: 'top-right',
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'colored'
-        })
       }
       if (isCommonError(error)) {
-        toast.error(error.message, {
+        toast.error((error.data as FailResponse).message, {
           position: 'top-right',
           autoClose: 2000,
           hideProgressBar: false,
@@ -84,7 +70,11 @@ function Register({ jump, setJump }: RegisterProps) {
     }
     if (data) {
       dispatch(save_user(data.data))
-      dispatch(setIsOpen(false))
+      dispatch(
+        setIsOpen({
+          open: false
+        })
+      )
     }
   }, [WorkingWithLocalStorage.get('access_token'), data])
   return (
@@ -93,20 +83,32 @@ function Register({ jump, setJump }: RegisterProps) {
         <button
           type='button'
           className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
-            'text-gray-500': !jump,
-            'underline underline-offset-4': jump
+            'text-gray-500': isOpen.type === 'register'
           })}
-          onClick={() => setJump(true)}
+          onClick={() =>
+            dispatch(
+              setIsOpen({
+                ...isOpen,
+                type: 'login'
+              })
+            )
+          }
         >
           Đăng nhập
         </button>
         <button
           type='button'
           className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
-            'text-gray-500': jump,
-            'underline underline-offset-4': !jump
+            'text-gray-500': isOpen.type === 'login'
           })}
-          onClick={() => setJump(false)}
+          onClick={() =>
+            dispatch(
+              setIsOpen({
+                ...isOpen,
+                type: 'register'
+              })
+            )
+          }
         >
           Đăng kí
         </button>
@@ -191,7 +193,17 @@ function Register({ jump, setJump }: RegisterProps) {
           </button>
         )}
       </div>
-      <button type='button' className='absolute -top-5 -right-2 md:hidden' onClick={() => dispatch(setIsOpen(false))}>
+      <button
+        type='button'
+        className='absolute -top-5 -right-2 md:hidden'
+        onClick={() =>
+          dispatch(
+            setIsOpen({
+              open: false
+            })
+          )
+        }
+      >
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'

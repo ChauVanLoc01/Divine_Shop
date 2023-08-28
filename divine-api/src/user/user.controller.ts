@@ -1,4 +1,11 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  FileTypeValidator,
+  HttpStatus,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  UseGuards,
+} from '@nestjs/common';
 import {
   Body,
   Get,
@@ -8,6 +15,8 @@ import {
   Put,
   Req,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common/decorators';
 import { UserService } from './user.service';
 import { LocalGuard } from '../commons/guards/local.guard';
@@ -20,8 +29,13 @@ import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { Public } from '../commons/Metadata/public.metadata';
 import { Request, Response } from 'express';
 import { ChangePasswordDTO } from './dto/change-password.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Admin } from '../commons/Metadata/role.metadata';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { UpdateProfileDTO } from './dto/update-profile.dto';
+import { MyException } from '../commons/filters/my.filter';
 
 @ApiTags('Users')
 @Controller()
@@ -129,5 +143,52 @@ export class UserController {
   @Get('profile')
   profile(@Req() req: ReqWithLocal) {
     return this.userService.profile(req.user.user_id);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: UpdateProfileDTO,
+  })
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: process.cwd() + '/public/images',
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = extname(file.originalname);
+          const filename = `${uniqueSuffix}${ext}`;
+          callback(null, filename);
+        },
+      }),
+    }),
+  )
+  @Put('profile')
+  update_profile(
+    @UploadedFile(
+      new ParseFilePipe({
+        exceptionFactory(error) {
+          throw new MyException({
+            status_code: HttpStatus.BAD_REQUEST,
+            message: error,
+          });
+        },
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5000000 }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File,
+    @Body() body: UpdateProfileDTO,
+    @Req() req: ReqWithLocal,
+  ) {
+    return this.userService.update_profile(
+      req.user.user_id,
+      body,
+      file ? file.filename : undefined,
+    );
   }
 }

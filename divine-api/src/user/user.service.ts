@@ -41,7 +41,7 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.UNAUTHORIZED,
-        message: 'unauthorized',
+        message: 'Lỗi xác thực người dùng',
         errors: {
           email: 'không tồn tại',
         },
@@ -50,7 +50,7 @@ export class UserService {
     if (!(await this.comparePassword(password, user.password))) {
       throw new MyException({
         status_code: HttpStatus.UNAUTHORIZED,
-        message: 'unauthorized',
+        message: 'Lỗi xác thực người dùng',
         errors: {
           password: 'không đúng',
         },
@@ -59,7 +59,7 @@ export class UserService {
     if (!user.isActive) {
       throw new MyException({
         status_code: HttpStatus.UNAUTHORIZED,
-        message: 'unauthorized',
+        message: 'Lỗi xác thực người dùng',
         errors: {
           block: 'Tài khoản của bạn đã bị khóa',
         },
@@ -105,7 +105,7 @@ export class UserService {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
     return {
-      message: 'Wellcome to Van Loc Store',
+      message: 'Chào mừng bạn đến với Van Loc Store',
       data: {
         accessToken: access_token,
       },
@@ -131,14 +131,14 @@ export class UserService {
         },
       });
       return {
-        message: 'Well come to My Store',
+        message: 'Chào mừng bạn đến với Van Loc Store',
         data: {
           accessToken: await this.createAccessToken({ role, user_id }),
         },
       };
     }
     return {
-      message: 'Well come to My Store',
+      message: 'Chào mừng bạn đến với Van Loc Store',
       data: {
         accessToken: await this.createAccessToken({
           role: userDB.role,
@@ -200,13 +200,13 @@ export class UserService {
       'register',
       {
         to: email,
-        subject: 'Welcome to My Store',
-        html: '<p>Congratulation! Hello ' + name,
+        subject: 'Chào mừng bạn đến với Van Loc Store',
+        html: '<p>Chúc mừng bạn đăng kí tài khoản thành công! Xin chào ' + name,
       },
       { removeOnComplete: true },
     );
     return {
-      message: 'Register successfull',
+      message: 'Đăng kí thành công',
       data: {
         accessToken,
       },
@@ -217,7 +217,7 @@ export class UserService {
     const idExist = await this.cacheManager.get(email);
     if (idExist) {
       return {
-        message: 'Only sent code after 20s',
+        message: 'Chỉ được phép gửi code sau 20s',
         data: {},
       };
     }
@@ -255,7 +255,7 @@ export class UserService {
         },
       );
       return {
-        message: 'Sent code',
+        message: 'Đã gửi code',
         data: {},
       };
     } catch (error) {
@@ -339,7 +339,7 @@ export class UserService {
       },
     });
     return {
-      message: 'Logout successfully',
+      message: 'Đăng xuất thành công',
       data: {},
     };
   }
@@ -446,7 +446,9 @@ export class UserService {
 
   async profile(
     user_id: string,
-  ): Promise<SuccessResponse<Omit<user, 'password' | 'created' | 'updated'>>> {
+  ): Promise<
+    SuccessResponse<Omit<user, 'password' | 'created' | 'updated' | 'isActive'>>
+  > {
     const user = await this.prisma.user.findUnique({
       where: {
         user_id,
@@ -463,7 +465,41 @@ export class UserService {
     }
     return {
       message: 'Lấy thông tin cá nhân thành công',
-      data: omit(user, ['password', 'created', 'updated']),
+      data: omit(user, ['password', 'created', 'updated', 'isActive']),
+    };
+  }
+
+  async update_profile(
+    user_id: string,
+    { email, name }: Partial<Pick<user, 'email' | 'name'>>,
+    file_name?: string,
+  ): Promise<
+    SuccessResponse<Omit<user, 'password' | 'created' | 'updated' | 'isActive'>>
+  > {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        user_id,
+      },
+    });
+    if (!user) {
+      throw new MyException({
+        status_code: HttpStatus.NOT_FOUND,
+        message: 'Người dùng không tồn tại',
+      });
+    }
+    const updated = await this.prisma.user.update({
+      where: {
+        user_id,
+      },
+      data: {
+        email,
+        name,
+        avatar: file_name ? file_name : undefined,
+      },
+    });
+    return {
+      message: 'Cập nhật thông tin thành công',
+      data: omit(updated, ['password', 'created', 'updated', 'isActive']),
     };
   }
 
@@ -475,7 +511,7 @@ export class UserService {
     if (current_password === new_password) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Both password is must different',
+        message: 'Mật khẩu mới và mật khẩu cũ phải khác nhau',
       });
     }
     const user = await this.prisma.user.findUnique({
@@ -486,13 +522,16 @@ export class UserService {
     if (!user) {
       throw new MyException({
         status_code: HttpStatus.NOT_FOUND,
-        message: 'User does not found',
+        message: 'Người dùng không tồn tại',
       });
     }
     if (!(await this.comparePassword(current_password, user.password))) {
       throw new MyException({
         status_code: HttpStatus.BAD_REQUEST,
-        message: 'Current password is wrong',
+        message: 'Thay đổi password thất bại',
+        errors: {
+          current_password: 'mật khẩu hiện tại không đúng',
+        },
       });
     }
     await this.prisma.user.update({
@@ -504,7 +543,7 @@ export class UserService {
       },
     });
     return {
-      message: 'Update password successfully',
+      message: 'Thay đổi password thành công',
       data: {},
     };
   }

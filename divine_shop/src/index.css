@@ -10,3 +10,12 @@
 .hide-scroll-bar::-webkit-scrollbar {
   display: none;
 }
+
+div.ant-popconfirm-buttons>button.ant-btn.css-dev-only-do-not-override-17a39f8.ant-btn-primary.ant-btn-sm {
+  background-color: #1677ff;
+  color: white;
+}
+
+div.ant-popconfirm-buttons>button.ant-btn.css-dev-only-do-not-override-17a39f8.ant-btn-primary.ant-btn-sm:hover {
+  background-color: #4096ff;
+}

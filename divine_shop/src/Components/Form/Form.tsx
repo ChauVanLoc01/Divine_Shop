@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import PortalForm from './PortalForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
@@ -10,12 +9,9 @@ type FormProps = {
   buttonClass?: string
 }
 
-function Form({ isLogin, content, buttonClass }: FormProps) {
+function Form({ content, buttonClass, isLogin }: FormProps) {
   const dispatch = useDispatch<AppDispatch>()
   const isOpen = useSelector((state: RootState) => state.UserSliceName.isOpen)
-  useEffect(() => {
-    document.getElementById('root')?.classList.add('relative')
-  }, [])
   return (
     <>
       <button className={buttonClass} onClick={() => dispatch(setIsOpen(!isOpen))}>

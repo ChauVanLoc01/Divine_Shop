@@ -16,3 +16,8 @@ export type Login = SuccessResponse<{
 export type Register = Login
 
 export type UserProfile = SuccessResponse<User>
+
+export type ChangePassword = {
+  current_password: string
+  new_password: string
+}

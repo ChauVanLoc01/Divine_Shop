@@ -51,9 +51,8 @@ function App() {
                 <Route path={Path.user} element={<User />}>
                   <Route path={Path.profile} element={<Profile />} />
                   <Route path={Path.password} element={<Password />} />
-                  <Route path={Path.history} element={<OrderHistory />}>
-                    <Route path=':orderId' element={<OrderDetail />} />
-                  </Route>
+                  <Route path={Path.history} element={<OrderHistory />} />
+                  <Route path={`${Path.history}/:orderId`} element={<OrderDetail />} />
                   <Route path={Path.favorate} element={<FavorateProduct />} />
                   <Route path={Path.my_cmt} element={<MyCmt />} />
                 </Route>

@@ -8,32 +8,38 @@ datasource db {
 }
 
 model cmt {
-  cmt_id  Int       @id @default(autoincrement())
-  content String    @db.Text
-  created DateTime? @default(now()) @db.Timestamp(0)
-  updated DateTime? @db.Timestamp(0)
-  user_id String    @db.VarChar(50)
-  item_id String    @db.VarChar(50)
-  user    user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_1")
-  item    item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_2")
+  cmt_id            String    @id @db.VarChar(50)
+  content           String    @db.Text
+  created           DateTime? @default(now()) @db.Timestamp(0)
+  updated           DateTime? @db.Timestamp(0)
+  user_id           String?   @db.VarChar(50)
+  email             String    @db.VarChar(100)
+  item_id           String    @db.VarChar(50)
+  references_cmt_id String?   @db.VarChar(50)
+  user              user?     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_1")
+  item              item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_2")
+  cmt               cmt?      @relation("cmtTocmt", fields: [references_cmt_id], references: [cmt_id], onDelete: NoAction, onUpdate: NoAction, map: "cmt_ibfk_3")
+  other_cmt         cmt[]     @relation("cmtTocmt")
 
   @@index([item_id], map: "item_id")
   @@index([user_id], map: "user_id")
+  @@index([references_cmt_id], map: "references_cmt_id")
 }
 
 model item {
-  item_id             String        @id @db.VarChar(50)
-  item_name           String        @db.VarChar(500)
-  image               String        @db.VarChar(300)
-  price               Float         @db.Float
-  priceBeforeDiscount Float?        @db.Float
+  item_id             String          @id @db.VarChar(50)
+  item_name           String          @db.VarChar(500)
+  image               String          @db.VarChar(300)
+  price               Float           @db.Float
+  priceBeforeDiscount Float?          @db.Float
   quantity            Int
-  sold                Int?          @default(0)
-  description         String?       @db.Text
+  sold                Int?            @default(0)
+  description         String?         @db.Text
   category            item_category
-  created             DateTime?     @default(now()) @db.Timestamp(0)
-  updated             DateTime?     @db.Timestamp(0)
+  created             DateTime?       @default(now()) @db.Timestamp(0)
+  updated             DateTime?       @db.Timestamp(0)
   cmt                 cmt[]
+  favorate_item       favorate_item[]
   itemInOrder         itemInOrder[]
 }
 
@@ -76,19 +82,32 @@ model session {
 }
 
 model user {
-  user_id  String     @id @db.VarChar(50)
-  name     String     @db.VarChar(50)
-  email    String     @db.VarChar(100)
-  password String?    @db.VarChar(100)
-  avatar   String?    @db.VarChar(500)
-  point    Int?       @default(0)
-  role     user_role? @default(user)
-  isActive Boolean?   @default(true)
-  created  DateTime?  @default(now()) @db.Timestamp(0)
-  updated  DateTime?  @db.Timestamp(0)
-  cmt      cmt[]
-  order    order[]
-  session  session[]
+  user_id       String          @id @db.VarChar(50)
+  name          String          @db.VarChar(50)
+  email         String          @db.VarChar(100)
+  password      String?         @db.VarChar(100)
+  avatar        String?         @db.VarChar(500)
+  point         Int?            @default(0)
+  role          user_role?      @default(user)
+  isActive      Boolean?        @default(true)
+  created       DateTime?       @default(now()) @db.Timestamp(0)
+  updated       DateTime?       @db.Timestamp(0)
+  cmt           cmt[]
+  favorate_item favorate_item[]
+  order         order[]
+  session       session[]
+}
+
+model favorate_item {
+  item_id       String    @db.VarChar(50)
+  user_id       String    @db.VarChar(50)
+  receive_email Boolean?  @default(true)
+  created       DateTime? @default(now()) @db.Timestamp(0)
+  item          item      @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "favorate_item_ibfk_1")
+  user          user      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "favorate_item_ibfk_2")
+
+  @@id([item_id, user_id])
+  @@index([user_id], map: "user_id")
 }
 
 enum order_status {

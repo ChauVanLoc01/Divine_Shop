@@ -1106,8 +1106,14 @@ async function convert() {
       } catch (error) {}
     })
   );
-  // await prisma.item.createMany({
-  //   data: result,
-  // });
+  await prisma.item.createMany({
+    data: result,
+  });
 }
-console.log(convert());
+// console.log(convert());
+
+async function deleteSession() {
+  await prisma.session.deleteMany();
+}
+
+deleteSession();

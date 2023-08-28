@@ -1,5 +1,4 @@
-import { Link, useMatch, useNavigate } from 'react-router-dom'
-import Form from '../Form'
+import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
 import { Path } from 'src/App'
 import { useState, useRef } from 'react'
@@ -13,18 +12,24 @@ import {
   useDismiss,
   shift,
   arrow,
-  FloatingArrow
+  FloatingArrow,
+  offset
 } from '@floating-ui/react'
 import LinkToTop from '../LinkToTop'
 import { delete_ls } from 'src/utils/slices/user.slice'
+import { setIsOpen as setOpen } from 'src/utils/slices/user.slice'
+import PortalForm from '../Form/PortalForm'
+import Category from 'src/pages/Home/Category'
 
 function Header() {
   const buy_items = useSelector((state: RootState) => state.ItemsSliceName.cart)
   const profile = useSelector((state: RootState) => state.UserSliceName.user)
+  const open = useSelector((state: RootState) => state.UserSliceName.isOpen)
   const dispatch = useDispatch<AppDispatch>()
   const path = useMatch(Path.viewed)
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate()
+  const location = useLocation()
   const handSearch = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     if (search.length > 0) {
@@ -50,6 +55,40 @@ function Header() {
   const click = useClick(context)
   const dismiss = useDismiss(context)
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss])
+  // floating ui
+
+  const handleOpenPortal = (type: 'login' | 'register') => () => {
+    dispatch(
+      setOpen({
+        open: true,
+        type
+      })
+    )
+  }
+
+  // floating ui
+  const [isOpenCategory, setIsOpenCategory] = useState(false)
+  const {
+    refs: refsCategory,
+    floatingStyles: floatingStylesCategory,
+    context: contextCategory
+  } = useFloating({
+    open: isOpenCategory,
+    onOpenChange: setIsOpenCategory,
+    middleware: [
+      shift(),
+      offset({
+        mainAxis: 15
+      })
+    ],
+    placement: 'bottom-start'
+  })
+  const click_category = useClick(contextCategory)
+  const dismiss_category = useDismiss(contextCategory)
+  const { getReferenceProps: getReferencePropsCategory, getFloatingProps: getFloatingPropsCategory } = useInteractions([
+    click_category,
+    dismiss_category
+  ])
   // floating ui
   return (
     <div className='text-white'>
@@ -193,7 +232,7 @@ function Header() {
                   type='text'
                   name='search'
                   id='search'
-                  placeholder=''
+                  placeholder='Bạn muốn tìm gì?'
                   value={search}
                 />
               </div>
@@ -247,33 +286,32 @@ function Header() {
               </button>
             ) : (
               <div className='md:flex items-center justify-center space-x-2 hidden'>
-                <Form
-                  isLogin={true}
-                  buttonClass='group transition-all duration-200 flex items-center space-x-2'
-                  content={
-                    <>
-                      <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth={1.5}
-                          stroke='currentColor'
-                          className='w-6 h-6'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
-                          />
-                        </svg>
-                      </span>
-                      <span>Đăng nhập</span>
-                    </>
-                  }
-                />
+                <button
+                  className='group transition-all duration-200 flex items-center space-x-2'
+                  onClick={handleOpenPortal('login')}
+                >
+                  <span className='rounded-full group-hover:bg-[#2985FF] border-[1px] border-white p-2 xl:inline-block hidden'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='w-6 h-6'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'
+                      />
+                    </svg>
+                  </span>
+                  <span>Đăng nhập</span>
+                </button>
                 <span>/</span>
-                <Form isLogin={false} content='Đăng kí' />
+                <button onClick={handleOpenPortal('register')}>Đăng kí</button>
+                {open.open && open.type === 'login' && <PortalForm isLogin={true} />}
+                {open.open && open.type === 'register' && <PortalForm isLogin={false} />}
               </div>
             )}
             {isOpen && (
@@ -446,19 +484,51 @@ function Header() {
       </div>
       <div className='bg-gray-50 text-gray-700 font-semibold lg:block hidden border border-b-gray-100'>
         <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm py-2 flex items-center justify-between'>
-          <button className='flex space-x-1 xl:space-x-2'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='w-6 h-6'
+          {['/', '/search'].includes(location.pathname) ? (
+            <button className='flex space-x-1 xl:space-x-2'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-6 h-6'
+              >
+                <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
+              </svg>
+              <span>Danh mục sản phẩm</span>
+            </button>
+          ) : (
+            <button
+              ref={refsCategory.setReference}
+              {...getReferencePropsCategory()}
+              className='flex space-x-1 xl:space-x-2'
             >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
-            </svg>
-            <span>Danh mục sản phẩm</span>
-          </button>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+                strokeWidth={1.5}
+                stroke='currentColor'
+                className='w-6 h-6'
+              >
+                <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
+              </svg>
+              <span>Danh mục sản phẩm</span>
+            </button>
+          )}
+          {isOpenCategory && (
+            <FloatingPortal>
+              <div
+                ref={refsCategory.setFloating}
+                style={floatingStylesCategory}
+                {...getFloatingPropsCategory()}
+                className='w-fit shadow-lg z-[100] overflow-hidden rounded-sm'
+              >
+                <Category func={() => setIsOpenCategory(false)} />
+              </div>
+            </FloatingPortal>
+          )}
           <div className='flex lg:space-x-6'>
             <button className='flex items-center xl:space-x-2 space-x-1'>
               <img

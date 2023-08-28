@@ -1,28 +1,69 @@
-// import { ItemQuery } from 'src/Types/items.type'
+import { ItemQuery } from 'src/Types/items.type'
 import ListBox from './ListBox'
+import { useNavigate } from 'react-router-dom'
+import { joinPathQuery } from 'src/utils/utils'
 
-// type SortProps = {
-//   setQuery: React.Dispatch<React.SetStateAction<ItemQuery>>
-// }
+type SortProps = {
+  query: ItemQuery
+  setQuery: React.Dispatch<React.SetStateAction<ItemQuery>>
+}
 
-function Sort() {
+const category = [
+  'entertainment',
+  'work',
+  'learn',
+  'game_steam',
+  'ea_games',
+  'window_office',
+  'google_drive',
+  'steam_wallet',
+  'google_play_itune'
+]
+
+function Sort({ query, setQuery }: SortProps) {
+  const navigate = useNavigate()
+  const handleFiler = () => {
+    navigate({
+      pathname: '/search',
+      search: joinPathQuery(query)
+    })
+  }
+  const handleRecovery = () => {
+    setQuery({})
+    navigate({
+      pathname: '/search'
+    })
+  }
   return (
     <div className='xl:max-w-5xl xl:mx-auto xl:px-0 px-2 md:px-5 md:text-base text-sm space-y-4'>
       <div className='font-semibold text-2xl'>Tìm kiếm sản phẩm</div>
       <form className='flex md:gap-x-4 gap-3 flex-wrap'>
-        <div className='lg:basis-1/5 md:basis-1/4 w-[47%]'>
-          <ListBox title='Danh mục' />
+        <div className='xl:basis-1/5 lg:basis-3/12 md:basis-4/12 w-[54%]'>
+          <ListBox title='Danh mục' key_data='category' data={category} query={query} setQuery={setQuery} />
         </div>
-        <div className='lg:basis-1/5 md:basis-1/4 w-[47%]'>
-          <ListBox title='Mức giá' />
+        <div className='xl:basis-1/5 lg:basis-2/12 md:basis-3/12 w-[39%]'>
+          <ListBox
+            title='Khoảng giá'
+            key_data='price'
+            data={['dưới 100k', '100k - 500k', '500k - 1tr', 'trên 1tr']}
+            query={query}
+            setQuery={setQuery}
+          />
         </div>
-        <div className='lg:basis-1/5 md:basis-1/4 w-[47%]'>
-          <ListBox title='Sắp xếp' />
+        <div className='xl:basis-1/5 lg:basis-2/12 md:basis-3/12 w-[42%]'>
+          <ListBox
+            title='Sắp xếp'
+            key_data='order'
+            data={['Mới nhất', 'Cũ nhất', 'Bán chạy', 'Giá tăng dần', 'Giá giảm dần']}
+            query={query}
+            setQuery={setQuery}
+          />
         </div>
         <div>
           <button
-            type='submit'
-            className='text-white flex items-center px-5 py-2 rounded-md space-x-2 bg-[#2579F2] hover:bg-[#2579F2]/90 ease-linear duration-100 transition-all'
+            onClick={handleFiler}
+            type='button'
+            className='text-white flex items-center py-2 px-3 md:px-5 md:py-2 rounded-md space-x-2 bg-[#2579F2] hover:bg-[#2579F2]/90 ease-linear duration-100 transition-all'
           >
             <span>
               <svg
@@ -44,7 +85,7 @@ function Sort() {
           </button>
         </div>
         <div>
-          <button type='button' className='text-red-600 space-x-2 flex items-center py-2'>
+          <button onClick={handleRecovery} type='button' className='text-red-600 space-x-2 flex items-center py-2'>
             <span>
               <svg
                 xmlns='http://www.w3.org/2000/svg'

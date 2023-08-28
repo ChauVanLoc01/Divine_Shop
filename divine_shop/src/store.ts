@@ -3,16 +3,25 @@ import { ItemsApiPath, ItemsApi, ItemsApiMiddleware } from './utils/apis/items.a
 import { ItemsSlice } from './utils/slices/items.slice'
 import { UserApi, UserApiMiddleware, UserApiPath } from './utils/apis/user.api'
 import { UserSlice } from './utils/slices/user.slice'
+import { OrdersApi, OrdersApiMiddleware, OrdersApiPath } from './utils/apis/order.api'
+import { FavorateApi, FavorateApiMiddleware, FavorateApiPath } from './utils/apis/favorate.api'
 
 export const store = configureStore({
   reducer: {
     ItemsSliceName: ItemsSlice,
     [ItemsApiPath]: ItemsApi,
     UserSliceName: UserSlice,
-    [UserApiPath]: UserApi
+    [UserApiPath]: UserApi,
+    [OrdersApiPath]: OrdersApi,
+    [FavorateApiPath]: FavorateApi
   },
   middleware(getDefaultMiddleware) {
-    return getDefaultMiddleware().concat(ItemsApiMiddleware, UserApiMiddleware)
+    return getDefaultMiddleware().concat(
+      ItemsApiMiddleware,
+      UserApiMiddleware,
+      OrdersApiMiddleware,
+      FavorateApiMiddleware
+    )
   }
 })
 

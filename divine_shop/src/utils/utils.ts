@@ -12,3 +12,14 @@ export const createSlug = (item_name: string, item_id: string) => {
     item_id
   )
 }
+
+export const joinPathQuery = (query: Object) => {
+  return Object.entries(query)
+    .map(([k, v]) => `${k}=${v}`)
+    .join('&')
+}
+
+export const splitDate = (iso: string) => {
+  const [yyyy, mm, dd, hh, mi] = iso.split(/[/:\-T]/)
+  return `${hh}:${mi} ${dd}-${mm}-${yyyy}`
+}

@@ -1,44 +1,218 @@
-import { NavLink } from 'react-router-dom'
+import { Pagination } from 'antd'
+import { isUndefined, omitBy } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom'
+import { OrderQuery } from 'src/Types/order.type'
 import ListBox from 'src/pages/ProductList/Sort/ListBox'
+import { useGetOrderListQuery } from 'src/utils/apis/order.api'
+import { format_currency, joinPathQuery } from 'src/utils/utils'
+import { toast } from 'react-toastify'
+
+const checkDate = (date?: string) => {
+  if (date && !isNaN(Date.parse(date))) {
+    return date
+  }
+  return undefined
+}
+
+const checkOrder = (order: string | undefined) => {
+  return order && (order === 'asc' || order === 'desc') ? order : undefined
+}
+
+const checkNumber = (input: any) => {
+  if (!isNaN(input) && !isNaN(parseFloat(input))) {
+    return Number(input)
+  }
+  return undefined
+}
 
 function OrderHistory() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const {
+    end,
+    item_name,
+    order_by_created,
+    order_by_discount,
+    order_by_total_price,
+    order_id,
+    start,
+    limit,
+    page,
+    total_price_max,
+    total_price_min
+  } = Object.fromEntries(searchParams) as OrderQuery
+  const searchs = useMemo(() => {
+    return omitBy(
+      {
+        order_id,
+        item_name,
+        order_by_created: checkOrder(order_by_created),
+        order_by_total_price: checkOrder(order_by_total_price),
+        order_by_discount: checkOrder(order_by_discount),
+        end: checkDate(end),
+        start: checkDate(start),
+        page: checkNumber(page),
+        limit: checkNumber(limit),
+        total_price_max: checkNumber(total_price_max),
+        total_price_min: checkNumber(total_price_min)
+      } as OrderQuery,
+      isUndefined
+    )
+  }, [searchParams])
+  const [orderQuery, setOrderQuery] = useState<OrderQuery>(searchs)
+  const { data, refetch } = useGetOrderListQuery(searchs)
+  const handleJumpPage = (page: number) => {
+    setOrderQuery({
+      ...orderQuery,
+      page
+    })
+    navigate({
+      pathname: '/user/history',
+      search: joinPathQuery({ ...orderQuery, page } as OrderQuery)
+    })
+  }
+  const handleFilter = () => {
+    navigate({
+      pathname: '/user/history',
+      search: joinPathQuery(orderQuery)
+    })
+  }
+
+  const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.id === 'start') {
+      if (orderQuery.end) {
+        if (new Date(orderQuery.end).getTime() < new Date(e.target.value).getTime()) {
+          toast.error('Ngày bắt đầu phải nhỏ hơn ngày kết thúc', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+          orderQuery.start ? (e.target.value = orderQuery.start) : (e.target.value = '')
+        } else {
+          setOrderQuery({
+            ...orderQuery,
+            start: e.target.value
+          })
+        }
+      } else {
+        setOrderQuery({
+          ...orderQuery,
+          start: e.target.value
+        })
+      }
+    } else if (e.target.id === 'end') {
+      if (orderQuery.start) {
+        if (new Date(orderQuery.start).getTime() > new Date(e.target.value).getTime()) {
+          toast.error('Ngày bắt đầu phải nhỏ hơn ngày kết thúc', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+          orderQuery.end ? (e.target.value = orderQuery.end) : (e.target.value = '')
+        } else {
+          setOrderQuery({
+            ...orderQuery,
+            end: e.target.value
+          })
+        }
+      } else {
+        setOrderQuery({
+          ...orderQuery,
+          end: e.target.value
+        })
+      }
+    }
+  }
+
+  const handleRecovery = () => {
+    setOrderQuery({})
+    navigate({
+      pathname: '/user/history'
+    })
+  }
+
+  useEffect(() => {
+    refetch()
+  }, [searchParams])
+
   return (
     <div className='rounded-lg bg-white border border-gray-100 p-2 md:p-5 space-y-2 md:space-y-5'>
-      <div className='flex flex-wrap gap-x-5 gap-y-3'>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-full rounded-md ring-1 ring-gray-300 overflow-hidden'>
-          <div className='relative mx-auto w-[88%] md:w-9/12 lg:w-10/12'>
-            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='id'>
-              Mã đơn hàng
-            </label>
-            <input className='w-full outline-none pt-4' placeholder='ví dụ: 1111' type='text' name='' id='id' />
-          </div>
+      <div className='flex flex-wrap gap-x-3 gap-y-3'>
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-3/12 basis-full rounded-md ring-1 ring-gray-300 overflow-hidden relative'>
+          <label className='absolute top-0 left-2 md:left-3 text-sm text-gray-400' htmlFor='id'>
+            Tên sản phẩm
+          </label>
+          <input
+            onChange={(e) =>
+              setOrderQuery({
+                ...orderQuery,
+                item_name: e.target.value
+              })
+            }
+            className='w-full outline-none pt-4 px-2 md:px-3'
+            placeholder='ví dụ: youtube'
+            type='text'
+            id='id'
+            value={orderQuery.item_name ? orderQuery.item_name : ''}
+          />
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md ring-1 ring-gray-300 overflow-hidden'>
-          <div className='relative mx-auto w-9/12 lg:w-10/12'>
-            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='start'>
-              Ngày bắt đầu
-            </label>
-            <input className='w-full outline-none pt-4' type='date' name='' id='start' />
-          </div>
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-4/12 basis-[48%] rounded-md ring-1 ring-gray-300 overflow-hidden relative'>
+          <label className='absolute top-0 md:left-3 left-2 text-sm text-gray-400' htmlFor='start'>
+            Ngày bắt đầu
+          </label>
+          <input
+            className='w-full outline-none pt-4 px-2 md:px-3'
+            type='date'
+            id='start'
+            onChange={handleDate}
+            value={orderQuery.start ? orderQuery.start : ''}
+          />
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%] rounded-md  ring-1 ring-gray-300 overflow-hidden'>
-          <div className='relative mx-auto w-9/12 lg:w-10/12'>
-            <label className='absolute top-0 left-0 text-sm text-gray-400' htmlFor='start'>
-              Ngày kết thúc
-            </label>
-            <input className='w-full outline-none pt-4' type='date' name='' id='end' />
-          </div>
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-4/12 basis-[47%] rounded-md  ring-1 ring-gray-300 overflow-hidden relative'>
+          <label className='absolute top-0 left-2 md:left-3 text-sm text-gray-400' htmlFor='end'>
+            Ngày kết thúc
+          </label>
+          <input
+            className='w-full outline-none pt-4 px-2 md:px-3'
+            type='date'
+            id='end'
+            onChange={handleDate}
+            value={orderQuery.end ? orderQuery.end : ''}
+          />
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%]'>
-          <ListBox title='Trạng thái' />
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-3/12 basis-[48%]'>
+          <ListBox
+            title='Khoảng giá'
+            setOrderQuery={setOrderQuery}
+            orderQuery={orderQuery}
+            key_data='order_price'
+            data={['dưới 100k', '100k - 500k', '500k - 1tr', 'trên 1tr']}
+          />
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%]'>
-          <ListBox title='Khoảng giá' />
+        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-3/12 basis-[47%]'>
+          <ListBox
+            title='Sắp xếp theo'
+            setOrderQuery={setOrderQuery}
+            orderQuery={orderQuery}
+            data={['Mới nhất', 'Cũ nhất', 'Giá tăng dần', 'Giá giảm dần']}
+            key_data='order_history'
+          />
         </div>
-        <div className='lg:basis-1/4 xl:basis-1/6 md:basis-1/4 basis-[44%]'>
-          <ListBox title='Sắp xếp theo' />
-        </div>
-        <button className='flex space-x-2 items-center px-3 py-1 bg-[#2579F2] text-white rounded-md'>
+        <button
+          onClick={handleFilter}
+          className='flex space-x-2 items-center px-4 py-2 bg-[#2579F2] text-white rounded-md'
+        >
           <span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -57,7 +231,10 @@ function OrderHistory() {
           </span>
           <span>Lọc</span>
         </button>
-        <button className='flex space-x-2 items-center py-1 text-red-500 rounded-md font-medium'>
+        <button
+          onClick={handleRecovery}
+          className='flex space-x-2 items-center py-1 text-red-500 rounded-md font-medium'
+        >
           <span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -77,60 +254,77 @@ function OrderHistory() {
           <span>Xóa bộ lọc</span>
         </button>
       </div>
-      <div className='rounded-lg overflow-hidden ring-1 ring-gray-300 md:block hidden'>
+      <div className='rounded-md overflow-hidden ring-1 ring-gray-100 md:block hidden'>
         <table className='w-full text-sm text-left text-gray-800'>
-          <thead className='text-xs text-gray-800 uppercase bg-gray-300'>
+          <thead className='text-xs text-gray-800 uppercase bg-gray-100'>
             <tr>
-              <th className='px-6 py-3'>Thời gian</th>
-              <th className='px-6 py-3 lg:block hidden'>Mã đơn hàng</th>
-              <th className='px-6 py-3'>Sản phẩm</th>
-              <th className='px-6 py-3'>Tổng tiền</th>
-              <th className='px-6 py-3'>Trạng thái</th>
-              <th className='px-6 py-3'></th>
+              <th className='px-6 py-4'>Thời gian</th>
+              <th className='px-6 py-4 lg:block hidden'>Mã đơn hàng</th>
+              <th className='px-6 py-4'>Tổng tiền</th>
+              <th className='px-6 py-4'>Trạng thái</th>
+              <th className='px-6 py-4'></th>
             </tr>
           </thead>
-          <tbody>
-            <tr className='bg-white hover:bg-gray-100/80'>
-              <td scope='row' className='px-6 py-4'>
-                07-07-2023
-              </td>
-              <td className='px-6 py-4 lg:block hidden'>Silver</td>
-              <td className='px-6 py-4'>Apple MacBook Pro 17"</td>
-              <td className='px-6 py-4'>22.000.000đ</td>
-              <td className='px-6 py-4 text-green-600'>Thành công</td>
-              <td className='px-6 py-4'>
-                <NavLink to={'/'} className='text-[#2579F2] hover:underline'>
-                  Chi tiết
-                </NavLink>
-              </td>
-            </tr>
+          <tbody className='divide-y divide-gray-200'>
+            {data &&
+              data.data.orders.map((e) => (
+                <tr key={e.order_id} className='bg-white hover:bg-gray-50'>
+                  <td scope='row' className='px-6 py-4'>
+                    {e.created.slice(0, 10).split('-').reverse().join('-')}
+                  </td>
+                  <td className='px-6 py-4 lg:block hidden truncate max-w-[250px]'>{e.order_id}</td>
+                  <td className='px-6 py-4'>{format_currency(e.total)}đ</td>
+                  <td className='px-6 py-4 text-green-600'>
+                    {e.status === 'success' ? 'Thành công' : e.status === 'cancel' ? 'Đã hủy' : 'Chờ thanh toán'}
+                  </td>
+                  <td className='px-6 py-4'>
+                    <NavLink to={`/user/history/${e.order_id}`} className='text-[#2579F2] hover:underline'>
+                      Chi tiết
+                    </NavLink>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
-      <div className='flex gap-x-5 border-b py-3 border-gray-200 md:hidden'>
-        <div className='w-3/5 space-y-2'>
-          <div className='flex space-x-2'>
-            <span>#619645</span>
-            <NavLink className='text-[#2579F9]' to={''}>
-              Chi tiết
-            </NavLink>
+      {data &&
+        data.data.orders.map((e) => (
+          <div key={e.order_id} className='flex gap-x-5 border-b py-3 border-gray-200 md:hidden'>
+            <div className='w-3/5 space-y-2'>
+              <div className='flex space-x-2'>
+                <span className='max-w-[100px] truncate'>#{e.order_id}</span>
+                <NavLink className='text-[#2579F9]' to={`/user/history/${e.order_id}`}>
+                  Chi tiết
+                </NavLink>
+              </div>
+              <div className='text-gray-500'>{e.created.slice(0, 10).split('-').reverse().join('-')}</div>
+              <div className='w-5/6'>
+                <img className='w-full rounded-md' src={e.itemInOrder[0].item.image} alt='image' />
+              </div>
+            </div>
+            <div className='w-2/5 text-right space-y-2'>
+              <span className='text-green-600'>
+                {e.status === 'success' ? 'Thành công' : e.status === 'cancel' ? 'Đã hủy' : 'Chờ thanh toán'}
+              </span>
+              <div className='space-x-1'>
+                <span className=''>Tổng tiền: </span>
+                <span className='font-medium'>{format_currency(e.total)}đ</span>
+              </div>
+            </div>
           </div>
-          <div className='text-gray-500'>2023-04-26 13:06:04</div>
-          <div className='w-2/3'>
-            <img
-              className='w-full rounded-md'
-              src='https://cdn.divineshop.vn/image/catalog/Anh/Banner/Grammarly%20Premium%207%20ngay.png?hash=1623645470'
-              alt=''
-            />
-          </div>
-        </div>
-        <div className='w-2/5 text-right space-y-2'>
-          <span className='text-green-600'>Thành công</span>
-          <div className='space-x-1'>
-            <span className=''>Tổng tiền: </span>
-            <span className='font-medium'>15.000đ</span>
-          </div>
-        </div>
+        ))}
+      <div className='text-right pr-4 md:pr-16 lg:pr-32 py-2'>
+        {data && data.data.query.page_size > 1 && (
+          <Pagination
+            onChange={handleJumpPage}
+            defaultPageSize={1}
+            defaultCurrent={1}
+            current={orderQuery?.page ? orderQuery.page : 1}
+            total={data.data.query.page_size}
+            showSizeChanger={false}
+            rootClassName='text-base md:text-lg'
+          />
+        )}
       </div>
     </div>
   )

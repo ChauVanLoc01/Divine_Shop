@@ -7,18 +7,14 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginSchemaType, login_schema } from 'src/utils/schemas/login.schema'
 import { useLoginMutation, useProfileQuery } from 'src/utils/apis/user.api'
 import { isCommonError, isValidationError } from 'src/utils/check-error'
-import { ValidationFailResponse } from 'src/Types/responses.type'
+import { FailResponse, ValidationFailResponse } from 'src/Types/responses.type'
 import { WorkingWithLocalStorage as ls } from 'src/utils/local-storage'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'src/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from 'src/store'
 import { save_access_token, save_user, setIsOpen } from 'src/utils/slices/user.slice'
 
-type LoginProps = {
-  jump: boolean
-  setJump: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-function Login({ jump, setJump }: LoginProps) {
+function Login() {
+  const isOpen = useSelector((state: RootState) => state.UserSliceName.isOpen)
   const dispatch = useDispatch<AppDispatch>()
   const [errsForm, setErrsForm] = useState<Partial<LoginSchemaType>>({})
   const [login, { isLoading }] = useLoginMutation()
@@ -48,19 +44,9 @@ function Login({ jump, setJump }: LoginProps) {
       if (isValidationError(error)) {
         const errs_data = error.data as ValidationFailResponse<Partial<LoginSchemaType>>
         setErrsForm(errs_data.errors)
-        toast.error('Đăng nhập thất bại', {
-          position: 'top-right',
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'colored'
-        })
       }
       if (isCommonError(error)) {
-        toast.error(error.message, {
+        toast.error((error.data as FailResponse).message, {
           position: 'top-right',
           autoClose: 2000,
           hideProgressBar: false,
@@ -79,7 +65,11 @@ function Login({ jump, setJump }: LoginProps) {
     }
     if (data) {
       dispatch(save_user(data.data))
-      dispatch(setIsOpen(false))
+      dispatch(
+        setIsOpen({
+          open: false
+        })
+      )
     }
   }, [ls.get('access_token'), data])
   return (
@@ -88,20 +78,32 @@ function Login({ jump, setJump }: LoginProps) {
         <button
           type='button'
           className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
-            'text-gray-500 underline': !jump,
-            'underline underline-offset-4': jump
+            'text-gray-500 underline': isOpen.type === 'register'
           })}
-          onClick={() => setJump(true)}
+          onClick={() =>
+            dispatch(
+              setIsOpen({
+                ...isOpen,
+                type: 'login'
+              })
+            )
+          }
         >
           Đăng nhập
         </button>
         <button
           type='button'
           className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {
-            'text-gray-500': jump,
-            'underline underline-offset-4': !jump
+            'text-gray-500': isOpen.type === 'login'
           })}
-          onClick={() => setJump(false)}
+          onClick={() =>
+            dispatch(
+              setIsOpen({
+                ...isOpen,
+                type: 'register'
+              })
+            )
+          }
         >
           Đăng kí
         </button>
@@ -155,20 +157,24 @@ function Login({ jump, setJump }: LoginProps) {
         <a href=''>Bạn quên mật khẩu?</a>
       </div>
       <div>
-        {isLoading ? (
-          <div className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white text-center cursor-pointer hover:bg-[#2579F2]/90'>
-            Đăng nhập
-          </div>
-        ) : (
-          <button
-            type='submit'
-            className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white hover:bg-[#2579F2]/90'
-          >
-            Đăng nhập
-          </button>
-        )}
+        <button
+          type={isLoading ? 'button' : 'submit'}
+          className='w-full font-semibold p-2 xl:p-3 bg-[#2579F2] rounded-md text-white hover:bg-[#2579F2]/90'
+        >
+          Đăng nhập
+        </button>
       </div>
-      <button type='button' className='absolute -top-5 -right-2 md:hidden' onClick={() => dispatch(setIsOpen(false))}>
+      <button
+        type='button'
+        className='absolute -top-5 -right-2 md:hidden'
+        onClick={() =>
+          dispatch(
+            setIsOpen({
+              open: false
+            })
+          )
+        }
+      >
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'

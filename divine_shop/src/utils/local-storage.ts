@@ -1,7 +1,7 @@
 type Key = 'user' | 'item_in_cart' | 'access_token'
 
 export const WorkingWithLocalStorage = {
-  save(key: Key, value: string) {
+  set(key: Key, value: string) {
     localStorage.setItem(key, value)
   },
   get(key: Key) {
@@ -12,7 +12,7 @@ export const WorkingWithLocalStorage = {
   },
   update(key: Key, value: string) {
     this.delete(key)
-    this.save(key, value)
+    this.set(key, value)
   },
   clearAll() {
     localStorage.clear()

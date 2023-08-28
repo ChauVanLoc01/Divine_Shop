@@ -25,13 +25,9 @@ function Product({ bgColor, product }: ProductProps) {
     >
       <LinkToTop to={`/${createSlug(product.item_name, product.item_id)}`} onClick={handleViewed} className='relative'>
         <img className='rounded-md cursor-pointer w-full object-cover' src={product.image} alt='Product Image' />
-        <span
-          className={classNames('text-white hidden px-2 py-1 bg-zinc-800 rounded-md absolute top-1 left-1', {
-            'inline-block': product.quantity === 0
-          })}
-        >
-          Hết hàng
-        </span>
+        {product.quantity === 0 && (
+          <span className='text-white px-2 py-1 bg-zinc-800 rounded-md absolute top-1 left-1'>Hết hàng</span>
+        )}
       </LinkToTop>
       <div>
         <LinkToTop

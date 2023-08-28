@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 import LinkToTop from 'src/Components/LinkToTop'
 import NumberInput from 'src/Components/NumberInput'
@@ -20,7 +21,11 @@ function ProductInCart({ item }: ProductInCartProps) {
     )
   }
   return (
-    <div className='flex xl:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3'>
+    <div
+      className={classNames('flex xl:flex-row flex-col md:static relative md:gap-x-5 md:gap-y-0 gap-y-3', {
+        'opacity-50': item.quantity === 0
+      })}
+    >
       <LinkToTop to={`/${createSlug(item.item_name, item.item_id)}`} className='xl:basis-1/3 overflow-hidden'>
         <img className='w-full bg-cover rounded-md' src={item.image} alt='picture' />
       </LinkToTop>
@@ -31,7 +36,7 @@ function ProductInCart({ item }: ProductInCartProps) {
               to={`/${createSlug(item.item_name, item.item_id)}`}
               className='font-medium line-clamp-2 text-base md:text-lg'
             >
-              {item.item_name} {item.quantity}
+              {item.item_name}
             </LinkToTop>
             <div className='text-gray-600'>{item.category}</div>
           </div>
@@ -70,10 +75,16 @@ function ProductInCart({ item }: ProductInCartProps) {
             </span>
             <div className='space-x-2'>
               <span className='ml-2'>Tình trạng:</span>
-              <span className='text-green-600'>{item.quantity > 0 ? 'còn hàng' : 'hết hàng'}</span>
+              <span
+                className={classNames('text-green-600', {
+                  'text-red-600': item.quantity === 0
+                })}
+              >
+                {item.quantity > 0 ? 'còn hàng' : 'hết hàng'}
+              </span>
             </div>
           </div>
-          <button className='text-red-600' onClick={handleRemoveItem}>
+          <button className='text-red-600 opacity-100' onClick={handleRemoveItem}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'

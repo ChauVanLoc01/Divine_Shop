@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ItemListResult, ItemQuery, ItemResult } from 'src/Types/items.type'
-import { omitBy, isUndefined } from 'lodash'
 import { baseUrl } from 'src/constants/base-url.constant'
 
 const ItemApi = createApi({
@@ -10,10 +9,10 @@ const ItemApi = createApi({
   }),
   endpoints: (build) => ({
     getItemList: build.query<ItemListResult, ItemQuery>({
-      query: (query) => {
+      query: (params) => {
         return {
           url: 'items',
-          params: { ...omitBy(query, isUndefined) }
+          params
         }
       }
     }),

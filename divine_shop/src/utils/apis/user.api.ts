@@ -1,24 +1,16 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Login, Register, UserProfile } from 'src/Types/user.type'
+import { ChangePassword, Login, Register, User, UserProfile } from 'src/Types/user.type'
 import { LoginSchemaType } from '../schemas/login.schema'
 import { Route } from 'src/constants/route.constant'
 import { RegisterSchemaType } from '../schemas/register.schema'
-import { WorkingWithLocalStorage } from '../local-storage'
+import { WorkingWithLocalStorage as ls } from '../local-storage'
 import { baseUrl } from 'src/constants/base-url.constant'
+import { ProfileSchemaType } from '../schemas/profile.schema'
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl,
-    prepareHeaders: (headers, { endpoint }) => {
-      if ([Route.logout, Route.my_profile, Route.change_password].includes(endpoint)) {
-        headers.set(
-          'Authorization',
-          WorkingWithLocalStorage.get('access_token') ? (WorkingWithLocalStorage.get('access_token') as string) : ''
-        )
-      }
-      return headers
-    }
+    baseUrl
   }),
   endpoints: (build) => ({
     login: build.mutation<Login, LoginSchemaType>({
@@ -42,7 +34,47 @@ export const userApi = createApi({
     profile: build.query<UserProfile, void>({
       query: () => {
         return {
-          url: Route.my_profile
+          url: Route.my_profile,
+          headers: {
+            Authorization: ls.get('access_token') ? (ls.get('access_token') as string) : ''
+          }
+        }
+      }
+    }),
+    updateProfile: build.mutation<UserProfile, Partial<ProfileSchemaType>>({
+      query: (body) => {
+        return {
+          url: Route.my_profile,
+          method: 'PUT',
+          headers: {
+            Authorization: ls.get('access_token') ? (ls.get('access_token') as string) : ''
+          },
+          body
+        }
+      }
+    }),
+    updateAvatar: build.mutation<User, FormData>({
+      query: (body) => {
+        return {
+          url: Route.my_profile,
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'multipart/form-data;',
+            Authorization: ls.get('access_token') ? (ls.get('access_token') as string) : ''
+          },
+          body
+        }
+      }
+    }),
+    changePassword: build.mutation<{}, ChangePassword>({
+      query: (body) => {
+        return {
+          url: Route.change_password,
+          method: 'PUT',
+          headers: {
+            Authorization: ls.get('access_token') ? (ls.get('access_token') as string) : ''
+          },
+          body
         }
       }
     })
@@ -55,4 +87,11 @@ export const UserApi = userApi.reducer
 
 export const UserApiMiddleware = userApi.middleware
 
-export const { useLoginMutation, useRegisterMutation, useProfileQuery } = userApi
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useProfileQuery,
+  useChangePasswordMutation,
+  useUpdateProfileMutation,
+  useUpdateAvatarMutation
+} = userApi

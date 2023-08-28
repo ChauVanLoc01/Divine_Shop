@@ -3,6 +3,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import { useForm } from 'react-hook-form'
 import { ChangePasswordSchemaType, change_password_schema } from 'src/utils/schemas/change-password.schema'
+import { useChangePasswordMutation } from 'src/utils/apis/user.api'
+import { omit } from 'lodash'
+import { ChangePassword } from 'src/Types/user.type'
+import { isCommonError, isValidationError } from 'src/utils/check-error'
+import { FailResponse, ValidationFailResponse } from 'src/Types/responses.type'
+import { toast } from 'react-toastify'
 
 type Visible = {
   current_password: boolean
@@ -16,15 +22,52 @@ function Password() {
     new_password: false,
     confirm_new_password: false
   })
+  const [err, setErr] = useState<{ current_password?: string }>({})
+  const [change_password, { isLoading }] = useChangePasswordMutation()
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     resolver: yupResolver<ChangePasswordSchemaType>(change_password_schema)
   })
-  const onSubmit = (data: ChangePasswordSchemaType) => {
-    console.log(data)
+  const onSubmit = async (data: ChangePasswordSchemaType) => {
+    try {
+      await change_password(omit(data, ['confirm_new_password']) as ChangePassword).unwrap()
+      reset()
+      setErr({})
+      toast.success('Cập nhật mật khẩu thành công', {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored'
+      })
+    } catch (error) {
+      console.log(error)
+      if (isValidationError(error)) {
+        const err_data = (
+          error.data as ValidationFailResponse<Partial<Omit<ChangePasswordSchemaType, 'confirm_new_password'>>>
+        ).errors
+        setErr(err_data)
+      }
+      if (isCommonError(error)) {
+        toast.error((error.data as FailResponse).message, {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'colored'
+        })
+      }
+    }
   }
   const handleVisible = (key: keyof Visible) => () => {
     setVisible({
@@ -32,7 +75,6 @@ function Password() {
       [key]: !visible[key]
     })
   }
-
   return (
     <div className='rounded-lg bg-white border border-gray-100 md:py-10 flex justify-center py-6'>
       <form
@@ -46,12 +88,13 @@ function Password() {
         <div className='relative md:mb-0 mb-2'>
           <span className='absolute lg:text-sm text-xs bg-white top-0 left-3 px-1 text-red-600 -translate-y-1/2'>
             {errors.current_password?.message}
+            {err.current_password}
           </span>
           <input
             className={classNames(
               'hover:ring-1 w-full ring-[#2579F2] focus:ring-1 outline-none border border-gray-300 rounded-md pr-6 md:pl-3 pl-2 py-1 lg:py-2',
               {
-                'ring-transparent border border-red-600': errors.current_password
+                'ring-transparent border border-red-600': errors.current_password || err.current_password
               }
             )}
             type={visible.current_password ? 'text' : 'password'}
@@ -213,9 +256,8 @@ function Password() {
         </div>
         <div className='col-start-2 text-right py-2'>
           <input
-            onClick={handleSubmit(onSubmit)}
-            type='submit'
-            className='ring-[1px] ring-gray-300 hover:ring-[#2579F2] rounded-md px-8 py-1 text-[#2579F2] font-semibold cursor-pointer'
+            type={isLoading ? 'button' : 'submit'}
+            className='ring-[1px] ring-gray-300 hover:ring-[#2579F2] rounded-md px-8 py-1 cursor-pointer text-[#2579F2] font-semibold cursor-'
             value='Thay đổi'
           />
         </div>

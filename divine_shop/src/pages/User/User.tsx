@@ -12,9 +12,9 @@ function User() {
             <Link
               to={`/${Path.user}/${Path.profile}`}
               className={classNames(
-                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-md hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 rounded-md hover:bg-gray-100 duration-100 transition-all ease-linear flex items-center space-x-2',
                 {
-                  'bg-gray-100': location.pathname.includes(Path.profile)
+                  'bg-gray-100': location.pathname.endsWith(Path.profile)
                 }
               )}
             >
@@ -39,9 +39,9 @@ function User() {
             <Link
               to={`/${Path.user}/${Path.password}`}
               className={classNames(
-                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 rounded-lg hover:bg-gray-100 duration-100 transition-all ease-linear flex items-center space-x-2',
                 {
-                  'bg-gray-100': location.pathname.includes(Path.password)
+                  'bg-gray-100': location.pathname.endsWith(Path.password)
                 }
               )}
             >
@@ -66,9 +66,9 @@ function User() {
             <Link
               to={`/${Path.user}/${Path.history}`}
               className={classNames(
-                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 rounded-lg hover:bg-gray-100 duration-100 transition-all ease-linear flex items-center space-x-2',
                 {
-                  'bg-gray-100': location.pathname.includes(Path.history)
+                  'bg-gray-100': location.pathname.endsWith(Path.history) || location.pathname.indexOf('history') >= 0
                 }
               )}
             >
@@ -93,9 +93,9 @@ function User() {
             <Link
               to={`/${Path.user}/${Path.favorate}`}
               className={classNames(
-                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 rounded-lg hover:bg-gray-100 duration-100 transition-all ease-linear flex items-center space-x-2',
                 {
-                  'bg-gray-100': location.pathname.includes(Path.favorate)
+                  'bg-gray-100': location.pathname.endsWith(Path.favorate)
                 }
               )}
             >
@@ -120,9 +120,9 @@ function User() {
             <Link
               to={`/${Path.user}/${Path.my_cmt}`}
               className={classNames(
-                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 bg-transparent rounded-lg hover:bg-[#F3F4F6] duration-100 transition-all ease-linear flex items-center space-x-2',
+                'px-4 lg:px-3 xl:px-4 py-2 flex-shrink-0 rounded-lg hover:bg-gray-100 duration-100 transition-all ease-linear flex items-center space-x-2',
                 {
-                  'bg-gray-100': location.pathname.includes(Path.my_cmt)
+                  'bg-gray-100': location.pathname.endsWith(Path.my_cmt)
                 }
               )}
             >

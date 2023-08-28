@@ -30,7 +30,7 @@ function Cart() {
       <div className='xl:max-w-5xl xl:mx-auto md:text-base text-sm md:px-5 px-2 pb-2 md:pb-5 bg-white rounded-md space-y-5'>
         <div className='py-3 lg:py-5 static lg:sticky top-0 bg-white flex items-center border-gray-200 border-b space-x-3'>
           <span className='text-2xl font-semibold xl:text-3xl'>Giỏ hàng</span>
-          <span>({items_in_cart.length} sản phẩm)</span>
+          <span>({items_in_cart.filter((e) => e.quantity > 0).length} sản phẩm)</span>
         </div>
         {items_in_cart.length > 0 ? (
           <div className='bg-white flex lg:flex-row flex-col rounded-md lg:space-y-0 space-y-4 lg:space-x-5'>
@@ -39,7 +39,7 @@ function Cart() {
                 ? items_in_cart.map((e) => <ProductInCart item={e} key={e.item_id} />)
                 : items_in_cart.map((e) => <SkeletonInCart key={e.item_id} />)}
             </div>
-            {data ? <Bill items_in_cart={items_in_cart} /> : <SkeletonBill />}
+            {data ? <Bill items_in_cart={items_in_cart.filter((e) => e.quantity > 0)} /> : <SkeletonBill />}
           </div>
         ) : (
           <div className='bg-white flex flex-col items-center py-3 space-y-3'>

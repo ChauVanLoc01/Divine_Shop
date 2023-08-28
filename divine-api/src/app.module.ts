@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { OrderModule } from './order/order.module';
+import { CmtModule } from './cmt/cmt.module';
+import { FavorateItemModule } from './favorate_item/favorate_item.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { OrderModule } from './order/order.module';
     ItemModule,
     JwtModule,
     OrderModule,
+    CmtModule,
+    FavorateItemModule,
   ],
   providers: [
     {

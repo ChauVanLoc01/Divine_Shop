@@ -1,9 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from 'src/store'
-import { BuyItem } from 'src/utils/slices/items.slice'
+import { BuyItem, resetItemInCart } from 'src/utils/slices/items.slice'
 import { setIsOpen } from 'src/utils/slices/user.slice'
 import { format_currency } from 'src/utils/utils'
 import { toast } from 'react-toastify'
+import { isCommonError, isValidationError } from 'src/utils/check-error'
+import { FailResponse, ValidationFailResponse } from 'src/Types/responses.type'
+import { OrderAgrument } from 'src/Types/order.type'
+import { useOrderMutation } from 'src/utils/apis/order.api'
 
 type BillProps = {
   items_in_cart: BuyItem[]
@@ -12,7 +16,8 @@ type BillProps = {
 function Bill({ items_in_cart }: BillProps) {
   const user = useSelector((state: RootState) => state.UserSliceName.user)
   const dispath = useDispatch<AppDispatch>()
-  const handleOrder = () => {
+  const [order] = useOrderMutation()
+  const handleOrder = async () => {
     if (!user) {
       toast.warn('Bạn phải đăng nhập mới có thể thanh toán', {
         position: 'top-right',
@@ -24,8 +29,75 @@ function Bill({ items_in_cart }: BillProps) {
         progress: undefined,
         theme: 'colored'
       })
-      dispath(setIsOpen(true))
+      dispath(
+        setIsOpen({
+          open: true,
+          type: 'login'
+        })
+      )
     } else {
+      try {
+        const body = items_in_cart.filter((e) => {
+          if (e.quantity > 0) {
+            return { item_id: e.item_id, buy_amount: e.buy_amount }
+          }
+        })
+        if (body.length === 0) {
+          throw new Error('Lỗi đặt hàng do có đơn hàng đã bán hết')
+        } else {
+          await order({
+            items: body
+          } as OrderAgrument).unwrap()
+          dispath(resetItemInCart(body as { item_id: string; buy_amount: number }[]))
+          toast.success('Đặt hàng thành công', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+        }
+      } catch (error) {
+        if (isValidationError(error)) {
+          const err_data = (error.data as ValidationFailResponse<{ item_id: string }>).errors.item_id
+          const err_item = items_in_cart.find((e) => e.item_id === err_data)
+          toast.error(`${err_item?.item_name} không đủ số lượng`, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+        } else if (isCommonError(error)) {
+          toast.error((error.data as FailResponse).message, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+        } else {
+          toast.error((error as Error).message, {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored'
+          })
+        }
+      }
     }
   }
   return (

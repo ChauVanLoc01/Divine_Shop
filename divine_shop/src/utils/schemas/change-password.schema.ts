@@ -19,7 +19,8 @@ export const change_password_schema = yup
       .max(50, 'tối đa 50 kí tự')
       .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, {
         message: 'gồm số, chữ in hoa, in thường'
-      }),
+      })
+      .notOneOf([yup.ref('current_password')], 'phải khác mật khẩu hiện tại'),
     confirm_new_password: yup
       .string()
       .trim()
