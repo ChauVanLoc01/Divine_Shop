@@ -47,7 +47,7 @@ const OrderApi = createApi({
   })
 })
 
-export const { useOrderMutation, useGetOrderListQuery, useGetOrderQuery } = OrderApi
+export const { useOrderMutation, useGetOrderListQuery, useGetOrderQuery, usePrefetch } = OrderApi
 
 export const OrdersApiMiddleware = OrderApi.middleware
 

@@ -19,7 +19,7 @@ function PortalForm() {
   return (
     isOpen.open &&
     createPortal(
-      <div className='h-screen flex items-center lg:text-base text-sm w-screen z-50 top-0 left-0 fixed' id='parent'>
+      <div className='h-screen flex items-center lg:text-base text-sm w-screen z-[200] top-0 left-0 fixed' id='parent'>
         <div onClick={handleExit} className='bg-zinc-900/60 w-screen h-screen top-0 left-0 absolute' />
         <div className='lg:w-[85%] md:scale-90 xl:w-[70%] w-[90%] bg-white p-4 md:p-6 flex mx-auto border-2 space-x-5 rounded-lg z-10'>
           <div className='space-y-6 md:basis-3/5 w-full'>

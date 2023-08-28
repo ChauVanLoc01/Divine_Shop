@@ -58,7 +58,7 @@ function ProductList() {
     }
   }, [searchParams])
   const [query, setQuery] = useState<ItemQuery>(searchs)
-  const { data, refetch, isFetching } = useGetItemListQuery(searchs)
+  const { data, refetch, isLoading } = useGetItemListQuery(searchs)
 
   useEffect(() => {
     refetch()
@@ -72,7 +72,7 @@ function ProductList() {
         products={data?.data.items}
         isPaging={true}
         page_size={data?.data.query.page_size}
-        isFetching={isFetching}
+        isFetching={isLoading}
       />
     </div>
   )

@@ -5,6 +5,7 @@ import { addItemsIntoView } from 'src/utils/slices/items.slice'
 import { calculate_discount, createSlug, format_currency } from 'src/utils/utils'
 import LinkToTop from '../LinkToTop'
 import { AppDispatch } from 'src/store'
+import { usePrefetch } from 'src/utils/apis/items.api'
 
 type ProductProps = {
   product: Item
@@ -13,15 +14,20 @@ type ProductProps = {
 
 function Product({ bgColor, product }: ProductProps) {
   const dispatch = useDispatch<AppDispatch>()
-
+  const prefetch = usePrefetch('getItem')
   const handleViewed = () => {
     dispatch(addItemsIntoView(product))
+  }
+
+  const handleHoverPrefetch = (item_id: string) => () => {
+    prefetch(item_id)
   }
   return (
     <div
       className={classNames('relative flex flex-col justify-between', {
         'text-white': bgColor
       })}
+      onMouseEnter={handleHoverPrefetch(product.item_id)}
     >
       <LinkToTop to={`/${createSlug(product.item_name, product.item_id)}`} onClick={handleViewed} className='relative'>
         <img className='rounded-md cursor-pointer w-full object-cover' src={product.image} alt='Product Image' />

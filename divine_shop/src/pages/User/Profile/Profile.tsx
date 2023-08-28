@@ -171,13 +171,7 @@ function Profile() {
         <div className='md:basis-4/12 lg:basis-4/12 xl:basis-3/12 flex flex-col items-center space-y-4'>
           <img
             className='bg-cover rounded-full lg:w-[150px] lg:h-[150px] w-[120px] h-[120px] object-cover'
-            src={
-              file
-                ? URL.createObjectURL(file)
-                : user?.avatar
-                ? user.avatar
-                : 'https://cdn.divineshop.vn/image/catalog/icon/avatar-khach-hang-2-52544.png?hash=1649933269'
-            }
+            src={file ? URL.createObjectURL(file) : user?.avatar}
             alt='avatar'
           />
           <div>

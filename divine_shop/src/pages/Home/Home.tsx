@@ -9,21 +9,21 @@ function Home() {
   const {
     data: data_game_stream,
     isError: isErrGameSteam,
-    isFetching: isFetchingGameStema
+    isLoading: isFetchingGameStema
   } = useGetItemListQuery({
     category: ItemCategoryEnum.game_steam
   })
   const {
     data: data_new,
     isError: isErrNew,
-    isFetching: isFetchingNew
+    isLoading: isFetchingNew
   } = useGetItemListQuery({
     order_by_created: 'desc'
   })
   const {
     data: data_best_sold,
     isError: isErrBestSold,
-    isFetching: isFetchingBestSold
+    isLoading: isFetchingBestSold
   } = useGetItemListQuery({
     order_by_sold: 'desc'
   })

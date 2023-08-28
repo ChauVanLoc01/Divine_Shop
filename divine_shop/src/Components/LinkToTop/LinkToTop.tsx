@@ -7,9 +7,10 @@ interface Props {
   className?: string
   onClick?: Function
   options?: NavigateOptions
+  onMouseEnter?: () => void
 }
 
-const LinkToTop = ({ children, to, className, options, onClick }: Props) => {
+const LinkToTop = ({ children, to, className, options, onClick, onMouseEnter }: Props) => {
   const navigate = useNavigate()
 
   const navigateAndReset: MouseEventHandler<HTMLAnchorElement> = (event) => {
@@ -20,7 +21,7 @@ const LinkToTop = ({ children, to, className, options, onClick }: Props) => {
   }
 
   return (
-    <Link className={className} onClick={navigateAndReset} to={to}>
+    <Link className={className} onMouseEnter={onMouseEnter} onClick={navigateAndReset} to={to}>
       {children}
     </Link>
   )

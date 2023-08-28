@@ -74,7 +74,7 @@ function Login() {
   }, [ls.get('access_token'), data])
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-3 xl:space-y-4 md:static relative'>
-      <div className='text-2xl font-semibold space-x-4'>
+      <div className='lg:text-2xl font-semibold space-x-4 text-xl'>
         <button
           type='button'
           className={classNames('hover:underline hover:underline-offset-4 hover:decoration-2', {

@@ -20,6 +20,9 @@ import { delete_ls } from 'src/utils/slices/user.slice'
 import { setIsOpen as setOpen } from 'src/utils/slices/user.slice'
 import PortalForm from '../Form/PortalForm'
 import Category from 'src/pages/Home/Category'
+import { usePrefetch as orderPrefetch } from 'src/utils/apis/order.api'
+import { usePrefetch as favoratePrefetch } from 'src/utils/apis/favorate.api'
+import Draw from './Draw'
 
 function Header() {
   const buy_items = useSelector((state: RootState) => state.ItemsSliceName.cart)
@@ -30,6 +33,7 @@ function Header() {
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate()
   const location = useLocation()
+
   const handSearch = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     if (search.length > 0) {
@@ -90,6 +94,17 @@ function Header() {
     dismiss_category
   ])
   // floating ui
+
+  const order_prefetch = orderPrefetch('getOrderList')
+  const favorate_prefetch = favoratePrefetch('getAllFavorate')
+  const handlePreFetch = () => {
+    order_prefetch({
+      order_by_created: 'desc'
+    })
+    favorate_prefetch({
+      order_by_created: 'desc'
+    })
+  }
   return (
     <div className='text-white'>
       <div className='bg-[#0A59CC] py-2 lg:block hidden'>
@@ -196,18 +211,7 @@ function Header() {
               </span>{' '}
               <span>Store</span>
             </Link>
-            <button className='flex justify-center items-center lg:hidden'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='md:w-12 w-10 h-10 stroke-2 md:h-12'
-              >
-                <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
-              </svg>
-            </button>
+            <Draw />
             <form className='flex md:w-[35%] w-[55%] py-2'>
               <div className='relative w-full'>
                 <button
@@ -258,6 +262,7 @@ function Header() {
                 onMouseOver={() => setIsOpen(true)}
                 ref={refs.setReference}
                 {...getReferenceProps()}
+                onMouseEnter={handlePreFetch}
                 className='md:flex hidden text-center items-center lg:space-x-3 md:space-x-2 truncate max-w-[185px]'
               >
                 {profile.avatar ? (
@@ -310,8 +315,8 @@ function Header() {
                 </button>
                 <span>/</span>
                 <button onClick={handleOpenPortal('register')}>Đăng kí</button>
-                {open.open && open.type === 'login' && <PortalForm isLogin={true} />}
-                {open.open && open.type === 'register' && <PortalForm isLogin={false} />}
+                {open.open && open.type === 'login' && <PortalForm />}
+                {open.open && open.type === 'register' && <PortalForm />}
               </div>
             )}
             {isOpen && (
@@ -325,25 +330,31 @@ function Header() {
                 >
                   <FloatingArrow className='w-4 h-4 fill-white' ref={arrowRef} context={context} />
                   <LinkToTop
+                    onClick={() => setIsOpen(false)}
                     to={`/${Path.user}/${Path.profile}`}
                     className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
                   >
                     Quản lý tài khoản
                   </LinkToTop>
                   <LinkToTop
-                    to={`/${Path.user}/${Path.history}`}
+                    onClick={() => setIsOpen(false)}
+                    to={`/${Path.user}/${Path.history}?order_by_created=desc`}
                     className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
                   >
                     Lịch sử đơn hàng
                   </LinkToTop>
                   <LinkToTop
+                    onClick={() => setIsOpen(false)}
                     to={`/${Path.user}/${Path.favorate}`}
                     className='pl-3 pr-9 py-2 rounded-md hover:bg-gray-100'
                   >
                     Sản phẩm yêu thích
                   </LinkToTop>
                   <button
-                    onClick={() => dispatch(delete_ls(['access_token', 'user']))}
+                    onClick={() => {
+                      dispatch(delete_ls(['access_token', 'user']))
+                      setIsOpen(false)
+                    }}
                     className='pl-3 pr-9 text-left py-2 rounded-md hover:bg-gray-100'
                   >
                     Đăng xuất

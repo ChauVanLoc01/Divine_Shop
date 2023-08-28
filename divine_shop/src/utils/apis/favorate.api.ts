@@ -72,5 +72,6 @@ export const {
   useCreateFavorateMutation,
   useGetAllFavorateQuery,
   useGetFavorateDetailQuery,
-  useDeleteFavorateMutation
+  useDeleteFavorateMutation,
+  usePrefetch
 } = favorate_api

@@ -175,6 +175,8 @@ export class UserService {
           email,
           password: await this.hashPassword(password),
           name,
+          avatar:
+            'https://cdn.divineshop.vn/image/catalog/icon/avatar-khach-hang-2-52544.png?hash=1649933269',
         },
       });
       const payload = {

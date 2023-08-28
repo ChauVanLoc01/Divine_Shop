@@ -1,11 +1,13 @@
 import LinkToTop from 'src/Components/LinkToTop'
 import { ItemCategoryEnum } from 'src/Types/items.type'
+import { usePrefetch } from 'src/utils/apis/items.api'
 
 type CategoryProps = {
   func?: () => void
 }
 
 function Category({ func }: CategoryProps) {
+  const items_prefetch = usePrefetch('getItemList')
   return (
     <div className='bg-white p-2 h-full'>
       <LinkToTop
@@ -15,6 +17,11 @@ function Category({ func }: CategoryProps) {
         }}
         className='flex space-x-2 items-center hover:bg-gray-100 p-1 rounded-md pr-10'
         onClick={func}
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.entertainment
+          })
+        }
       >
         <img
           className='opacity-60 scale-[0.8]'
@@ -24,6 +31,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Giải trí</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.work
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -39,6 +51,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Làm việc</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.learn
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -54,6 +71,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Học tập</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.game_steam
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -69,6 +91,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Game stream</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.window_office
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -84,6 +111,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Window Office</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.google_drive
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -99,6 +131,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Google Drive</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.steam_wallet
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',
@@ -114,6 +151,11 @@ function Category({ func }: CategoryProps) {
         <span className='line-clamp-1'>Stream Wallet</span>
       </LinkToTop>
       <LinkToTop
+        onMouseEnter={() =>
+          items_prefetch({
+            category: ItemCategoryEnum.google_play_itune
+          })
+        }
         onClick={func}
         to={{
           pathname: '/search',

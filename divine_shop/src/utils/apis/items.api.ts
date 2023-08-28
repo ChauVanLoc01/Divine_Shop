@@ -26,7 +26,7 @@ const ItemApi = createApi({
   })
 })
 
-export const { useGetItemListQuery, useGetItemQuery } = ItemApi
+export const { useGetItemListQuery, useGetItemQuery, usePrefetch } = ItemApi
 
 export const ItemsApiMiddleware = ItemApi.middleware
 

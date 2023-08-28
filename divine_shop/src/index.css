@@ -19,3 +19,7 @@ div.ant-popconfirm-buttons>button.ant-btn.css-dev-only-do-not-override-17a39f8.a
 div.ant-popconfirm-buttons>button.ant-btn.css-dev-only-do-not-override-17a39f8.ant-btn-primary.ant-btn-sm:hover {
   background-color: #4096ff;
 }
+
+body>div:nth-child(3)>div>div.ant-drawer-content-wrapper {
+  width: 300px !important;
+}
